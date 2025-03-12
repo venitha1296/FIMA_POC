@@ -1,0 +1,349 @@
+body {
+  font-family: "Manrope", sans-serif;
+  font-style: normal;
+}
+ul {
+  padding: 0;
+  margin: 0;
+}
+ul,
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+::-webkit-input-placeholder {
+  font-family: "Manrope", sans-serif;
+}
+::-moz-placeholder {
+  font-family: "Manrope", sans-serif;
+}
+:-ms-input-placeholder {
+  font-family: "Manrope", sans-serif;
+}
+:-moz-placeholder {
+  font-family: "Manrope", sans-serif;
+}
+
+.login-banner {
+  width: 50%;
+  padding: 0 75px;
+  background: linear-gradient(142.92deg, #0051B0 0%, #023D82 97.3%);
+  box-shadow: -1px 0px 0px 0px #9999991A inset;
+}
+.login-banner h2 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 50px;
+  color: #ffffff;
+}
+.login-banner p {
+  font-size: 15px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+.login-banner__bg-circle--first-ring {
+  border: 1px solid #0575E6;
+  width: 480px;
+  height: 500px;
+  border-radius: 100%;
+  position: absolute;
+  bottom: -40%;
+  left: -22%;
+}
+.login-banner__bg-circle--second-ring {
+  border: 1px solid #0575E6;
+  width: 480px;
+  height: 500px;
+  border-radius: 100%;
+  position: absolute;
+  bottom: -43%;
+  left: -13%;
+}
+.login-form {
+  width: 50%;
+}
+.login-form__block {
+  box-shadow: 0px 8px 24px 0px #959DA533;
+  background: #FFFFFF;
+  border-radius: 20px;
+  max-width: 615px;
+  margin: 0 auto;
+  padding: 100px 60px;
+}
+.login-form__block h2 {
+  color: #272C68;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 40px 0 30px;
+}
+.login-form__block .form-label {
+  color: #9295B1;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.login-form__block .form-label .mandatory {
+  color: #FF5256;
+  margin-left: 2px;
+}
+.login-form__block .form-control {
+  border-color: #E3E5EE;
+  height: 45px;
+  border-radius: 10px;
+  color: #272C68;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 15px;
+}
+.login-form__block .form-icon {
+  position: absolute;
+  right: 17px;
+  top: 7px;
+}
+.login-form__block .form-icon .bi {
+  color: #6D6E9A;
+  font-size: 21px;
+}
+.login-form__block .form-control::-webkit-input-placeholder {
+  color: #272C68;
+}
+.login-form__block .form-control::-moz-placeholder {
+  color: #272C68;
+}
+.login-form__block .form-control:-ms-input-placeholder {
+  color: #272C68;
+}
+.login-form__block .form-control:-moz-placeholder {
+  color: #272C68;
+}
+.login-form__block .link-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+.login-form__block .link-text.active {
+  color: #7385E7;
+}
+.jacarta {
+  color: #272C68;
+}
+.cobalt {
+  color: #0051B0;
+}
+.text-line {
+  text-decoration: underline;
+}
+.login-form__block .btn-primary {
+  background: #0051B0;
+  border-color: #0051B0;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  height: 45px;
+  width: 100%;
+  margin: 30px 0 20px;
+}
+.login-form__block .alert-danger {
+  position: absolute;
+  bottom: -40px;
+  right: 0;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 2px 2px 2px 2px;
+  border-left: 2px solid #f1aeb5;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+}
+
+/* Home Page */
+
+.sidebar {
+  background: #0051B0;
+  box-shadow: -1px 0px 0px 0px #9999991A inset;
+  height: 100vh;
+}
+.sidebar--logo {
+  border-bottom: 1px solid #3374c0;
+  padding: 15px 30px 15px;
+  margin-bottom: 25px;
+}
+.sidebar ul {
+
+}
+.sidebar ul li {
+  margin-bottom: 5px;
+}
+.sidebar ul li a {
+  color: #ccdcef;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  height: 52px;
+  display: flex;
+  margin: 0 10px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 0 20px;
+}
+.sidebar ul li a.active {
+  background: #4D85C8;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.main-section {
+  background: #f9fafb;
+  width: calc(100vw - 256px);
+}
+
+.main-section header {
+  background: #FFFFFF;
+  height:70px;
+  padding: 15px 32px;
+  margin-left: 20px;
+}
+.main-section header .profile-name {
+  color: #2F2F2F;
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 15px;
+}
+.main-section header .profile-image {
+  border-radius: 8px;
+  border: 1px solid #DDE4EE;
+}
+
+.home-welcome-links {
+    height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.home-welcome-links h2 {
+   font-size: 36px;
+   font-weight: 800;
+   text-align: center;
+}
+.home-welcome-links p {
+  color: #56586B;
+  font-size: 16px;
+  text-align: center;
+  width: 55%;
+  margin: 0 auto;
+}
+
+.home-welcome-links .link-box {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 20px;
+}
+.home-welcome-links .link-box h3 {
+  color: #272C68;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0 15px;
+}
+.home-welcome-links .link-box h4 {
+  color: #23272E;
+  font-size: 12px;
+  font-weight: 500;
+}
+.home-welcome-links .link-box a {
+  color: #0051B0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 576px) {  }
+
+
+@media (min-width: 768px) {
+
+
+
+ }
+
+
+@media (min-width: 992px) {
+
+  .overflow-xl-hidden {
+    overflow: hidden;
+  }
+
+}
+
+
+@media (min-width: 1200px) {  }
+
+
+@media (min-width: 1400px) {  }
+
+
+@media (max-width: 575.98px) {  }
+
+
+@media (max-width: 767.98px) {  }
+
+
+@media (max-width: 991.98px) {  }
+
+
+@media (max-width: 1199.98px) {  }
+
+
+@media (max-width: 1399.98px) {  }
+
+@media (min-width: 320px) and (max-width: 767.98px) {
+  .login-banner,
+  .login-form {
+    width: 100%;
+  }
+  .login-banner {
+    height: auto !important;
+    padding: 20px 30px 5px;
+  }
+  .login-form__block {
+    padding: 25px;
+  }
+  .login-form__block h2 {
+    margin: 15px 0;
+  }
+  .login-banner h2 {
+    line-height: 27px;
+    font-size: 20px;
+  }
+  .login-banner p {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .login-banner,
+  .login-form {
+    width: 100%;
+  }
+  .login-banner {
+    height: auto !important;
+    padding: 30px;
+  }
+
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {  }
