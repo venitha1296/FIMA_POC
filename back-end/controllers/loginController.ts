@@ -1,4 +1,4 @@
-// loginController.js
+// loginController.ts
 
 import User from "../models/User";
 const bcrypt = require('bcrypt');
@@ -12,15 +12,11 @@ async function login(email: string, password: string): Promise<{ authenticated: 
     try {
         // Check if user exists
         const user = await User.findOne({ email });
-        console.log("User found:", user);
-        console.log("Stored Password in DB:", user?.password);
-        console.log("Entered Password:", JSON.stringify(password));
         if (!user) {
             return { authenticated: false, message: 'Invalid email or password.' };
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Is Password Matching:", isMatch);
 
         if (isMatch) {
             // Authentication successful
@@ -79,7 +75,7 @@ export const signup = async (email: string, username: string, password: string, 
 
         // Respond with success
         return callback(null, { message: 'User created successfully', user: newUser });
-    } catch (error:any) {
+    } catch (error: any) {
         return callback(new Error(error.message), undefined);
     }
 };

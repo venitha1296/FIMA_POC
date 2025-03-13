@@ -5,6 +5,7 @@ import axios from 'axios'; // Import axios for API requests
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
+import ApiFinder from "../apis/ApiFinder";
 
 
 const SignUp = () => {
@@ -42,7 +43,7 @@ const SignUp = () => {
 
         // Username validation
         if (!formData.username) {
-            newErrors.username = "Username is required";
+            newErrors.username = "Name is required";
         }
 
         // Email validation
@@ -74,13 +75,14 @@ const SignUp = () => {
         if (validateForm()) {
             setIsLoading(true); // Start loading
             try {
-                const response = await axios.post("http://localhost:3001/api/signup", formData); // Your backend API endpoint for signup
+                const response = await ApiFinder.post("/signup", formData); // Your backend API endpoint for signup
                 if (response.status === 200) {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
                     toast.success('Signup successful!', {
-                        position: "top-right",
-                        autoClose: 2000, // Automatically closes after 5 seconds
+                        icon: <i className="bi bi-check-circle-fill"></i>,              
+                        className: "toast-success",   
+                        autoClose: 2000,               
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -95,8 +97,9 @@ const SignUp = () => {
                 // Handle any API errors here, for example showing a general error message
                 // Show error toast
                 toast.error(errorMessage, {
-                    position: "top-right",
-                    autoClose: 2000,
+                    icon: <i className="bi bi-exclamation-triangle-fill"></i>,
+                    className: "toast-error",   
+                    autoClose: 2000,               
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -123,13 +126,13 @@ const SignUp = () => {
             <div className="login-form">
                 <div className="login-form__block">
                     <img src="/assets/images/login-logo.svg" alt="site logo" />
-                    <h2>Sign Up</h2>
+                    <h2>Signup</h2>
                     <div className="mb-4 position-relative">
-                        <label className="form-label">UserName<span className="mandatory">*</span></label>
+                        <label className="form-label">Name<span className="mandatory">*</span></label>
                         <input
                             type="username"
                             name="username"
-                            placeholder="Enter Username"
+                            placeholder="Enter Name"
                             value={formData.username}
                             className="form-control"
                             onChange={handleChange}
@@ -181,10 +184,10 @@ const SignUp = () => {
                             {isLoading ? (
                                 <>
                                     <span className="spinner-border spinner-border-sm me-2"></span>
-                                    Sign Up...
+                                    Sign up...
                                 </>
                             ) : (
-                                "Sign Up"
+                                "Sign up"
                             )}
                         </button>
                     </div>
