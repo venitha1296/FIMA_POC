@@ -6,6 +6,8 @@ import Country from "../models/Country";
 import AgentRegistry from "../models/AgentRegistry";
 import { sendSuccess, sendError, constantMessage } from '../utils/responseHandler';
 import { constants } from "../config/config";
+import axios from "axios";
+import FileOutput from "../models/FileOutput";
 
 export interface ValidationResult {
     isValid: boolean;
@@ -112,17 +114,34 @@ export function validateAgentPayload(payload: any): ValidationResult {
 
 export async function fetchAgentsWithPagination(req: Request, res: Response) {
     const page = parseInt(req.query.page as string, 10) || 1;
-    const limit = parseInt(req.query.limit as string, 10) || 10;
+    const limit = parseInt(req.query.limit as string, 10) || 12;
     const skip = (page - 1) * limit;
 
+    const { country, search } = req.query; // Extract country & search query from request
+    let query: any = {};
+
+    // Filter by country if provided
+    if (country) {
+        query.country = country;
+    }
+
+    // Perform a partial search across multiple fields
+    if (search) {
+        query.$or = [
+            { country: { $regex: search, $options: "i" } },
+            { source_url: { $regex: search, $options: "i" } },
+            { company: { $regex: search, $options: "i" } }
+        ];
+    }
+
     try {
-        // Populate the file_output_id to fetch data from the file_outputs collection
-        const agents = await AgentRegistry.find()
+        // Fetch agents with filtering, pagination, and populate file_output
+        const agents = await AgentRegistry.find(query)
             .skip(skip)
             .limit(limit)
             .populate("file_output");
 
-        const totalRecords = await AgentRegistry.countDocuments();
+        const totalRecords = await AgentRegistry.countDocuments(query);
         const totalPages = Math.ceil(totalRecords / limit);
 
         const responseData = {
@@ -136,19 +155,20 @@ export async function fetchAgentsWithPagination(req: Request, res: Response) {
         if (!res.headersSent) {
             return sendSuccess(res, responseData, constantMessage.AgentsFetchSuccess);
         }
-    } catch (error) {
-        console.error('Error fetching agents:', error);
+    } catch (error: any) {
+        console.error("Error fetching agents:", error);
         if (!res.headersSent) {
-            return sendError(res, error, 'Error fetching agents');
+            return sendError(res, error.message, "Error fetching agents");
         }
     }
 }
+
 
 /**
  * Create a new agent request.
  * The agent is created with status "Processing".
  */
-export async function createAgent(req: Request, res: Response): Promise<Response> {
+export async function sendAgentRequest(req: Request, res: Response): Promise<Response> {
     // Validate the payload using the separate function
     const validationResult = validateAgentPayload(req.body);
     if (!validationResult.isValid) {
@@ -160,7 +180,8 @@ export async function createAgent(req: Request, res: Response): Promise<Response
         );
     }
     // Destructure values from the payload
-    const { type, company, country, source_url } = req.body;
+    const { type, company, country, source_url, researchFocus, keyword } = req.body;
+    let requestId; // Declare requestId before try block
 
     try {
         // Create the new agent document with conditionally included fields
@@ -172,49 +193,106 @@ export async function createAgent(req: Request, res: Response): Promise<Response
             status: constants.Processing,      // Set status as "Processing"
             request_time: new Date(),  // Record the request time
             response_time: null,       // Response time is not set yet
+            is_failed: 0,
         });
 
-        await newAgent.save();
-        return sendSuccess(res, newAgent, constantMessage.AgentRequestSuccess, 201);
-    } catch (error) {
-        console.error("Error creating agent:", error);
-        return sendError(res, error, "Error creating agent request");
+        const savedAgent = await newAgent.save(); // MongoDB Save
+        requestId = savedAgent._id; // Get the generated request ID
+        const AI_WEBADDRESS = process.env.AI_WEBADDRESS as string;
+
+        // Step 2: Send saved request ID to third-party API
+        const thirdPartyResponse = await axios.post(AI_WEBADDRESS, {
+            requestId,  // Send requestId to third party
+            company,
+            country,
+            keyword
+        });
+
+        // Step 3: If third-party confirms success, return success response
+        if (thirdPartyResponse.data.status === "success") {
+            return sendSuccess(res, { requestId }, constantMessage.RequestInitiateSuccess, 201);
+        } else {
+            // Step 4: If third-party fails, update `is_failed = 1` and set status = "Failed"
+            await AgentRegistry.findByIdAndUpdate(requestId, {
+                status: "Failed",
+                is_failed: 1
+            });
+
+            return sendError(res, "", "Request failed", 400);
+        }
+    } catch (error: any) {
+        console.error("Error processing agent:", error);
+        // If an error occurs, mark it as failed
+        await AgentRegistry.findByIdAndUpdate(requestId, {
+            status: "Failed",
+            is_failed: 1
+        });
+        return sendError(res, error.message, "Error processing agent");
+    }
+}
+
+/** Second API - Receive OTP and Update DB */
+export async function receiveOTP(req: Request, res: Response) {
+    try {
+        const { requestId, otp } = req.body;
+
+        // Step 1: Find request
+        const agent = await AgentRegistry.findById(requestId);
+        if (!agent) {
+            return sendError(res,"", "Agent not found", 404);
+        }
+
+        // Step 2: Update OTP
+        agent.otp = otp;
+        await agent.save();
+
+        return sendSuccess(res, { requestId, otp }, constantMessage.OTPSuccess);
+    } catch (error:any) {
+        console.error("Error storing OTP:", error);
+        return sendError(res, error.message, "Error storing OTP",500);
+    }
+}
+
+/** 3. Third API - Receive Final Output and Mark as Completed */
+export async function receiveFinalOutput(req: Request, res: Response) {
+    try {
+        const { requestId, fileOutputData } = req.body;
+
+        // Step 1: Find request
+        const agent = await AgentRegistry.findById(requestId);
+        if (!agent) {
+            return sendError(res, "", "Agent not found", 404);
+        }
+
+        // Step 2: Save the received JSON content as a new FileOutput document
+        const fileOutput = new FileOutput({
+            data: fileOutputData,  // Store received JSON content
+        });
+
+        const savedFileOutput = await fileOutput.save();
+
+        // Step 3: Update the agent record with file_output ID and mark as completed
+        agent.file_output = savedFileOutput._id;
+        agent.status = "Completed";
+        agent.response_time = new Date();
+
+        await agent.save();
+
+        return sendSuccess(res, { requestId, fileOutputId: savedFileOutput._id }, "Request processed successfully");
+    } catch (error:any) {
+        console.error("Error processing final output:", error);
+        return sendError(res, error.message, "Error processing final output");
     }
 }
 
 /**
- * Update an agent with AI output.
- * This function sets the source_doc_link (from AI output) and updates the status to "Completed",
- * while also recording the response time.
- *
- * Expected to receive agentId as a URL parameter.
+ * Create a new agent request.
+ * The agent is created with status "Processing".
  */
-export async function updateAgentWithOutput(req: Request, res: Response): Promise<Response> {
-    const { agentId } = req.params; // Expecting URL: /api/agents/:agentId/output
-    const { source_doc_link } = req.body; // AI third-party output
-
-    if (!source_doc_link) {
-        return sendError(
-            res,
-            new Error("Missing third-party output"),
-            "Source doc link is required",
-            400
-        );
-    }
-
+export async function deleteAgent(req: Request, res: Response): Promise<Response> {
     try {
-        // Update the agent: set the source_doc_link, change status to "Completed", and record response_time
-        const updatedAgent = await AgentRegistry.findByIdAndUpdate(
-            agentId,
-            {
-                source_doc_link,
-                status: constants.Completed,
-                response_time: new Date(),
-            },
-            { new: true }
-        );
-
-        if (!updatedAgent) {
+        const agent = await AgentRegistry.findByIdAndDelete(req.params.id);
+        if (!agent) {
             return sendError(
                 res,
                 new Error("Agent not found"),
@@ -222,10 +300,8 @@ export async function updateAgentWithOutput(req: Request, res: Response): Promis
                 404
             );
         }
-
-        return sendSuccess(res, updatedAgent, constantMessage.AgentUpdateSuccess, 200);
-    } catch (error) {
-        console.error("Error updating agent:", error);
-        return sendError(res, error, "Error updating agent");
+        return sendSuccess(res, null, constantMessage.RequestDeleteSuccess, 200);
+    } catch (err: any) {
+        return sendError(res, err.message, "Error deleting agent");
     }
 }
