@@ -373,6 +373,32 @@ a {
   }
 }
 
+.msg-label {
+  color: #6A6C94;
+  font-family: Manrope, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.toast-success {
+  background-color: #4caf50 !important; 
+  color: #ffffff !important;           
+  border-radius: 8px !important;       
+  font-size: 16px !important;         
+  display: flex !important;           
+  align-items: center !important;     
+}
+
+.toast-error {
+  background-color: #f44336 !important; 
+  color: #ffffff !important;  
+  border-radius: 8px !important;   
+  font-size: 16px !important;    
+  display: flex !important;         
+  align-items: center !important;    
+}
 
 
 @media (min-width: 576px) {  }

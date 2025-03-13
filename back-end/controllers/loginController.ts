@@ -1,6 +1,7 @@
 // loginController.ts
 
 import User from "../models/User";
+import { constantMessage } from "../utils/responseHandler";
 const bcrypt = require('bcrypt');
 
 // Secret key for JWT signing
@@ -10,6 +11,17 @@ const { jwt, saltRounds, generateRandomPassword, sendEmail } = require('../commo
 
 async function login(email: string, password: string): Promise<{ authenticated: boolean; token?: string; message?: string }> {
     try {
+        // Basic field presence check
+        if (!email || !password) {
+            return { authenticated: false, message: 'All fields (email, password) are required.' };
+        }
+
+        // Validate email format using a simple regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return { authenticated: false, message: 'Invalid email format.' };
+        }
+
         // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
@@ -54,6 +66,32 @@ async function login(email: string, password: string): Promise<{ authenticated: 
  */
 export const signup = async (email: string, username: string, password: string, callback: (err: Error | null, result?: any) => void) => {
     try {
+        // Basic field presence check
+        if (!email || !username || !password) {
+            return callback(new Error('All fields (email, username, password) are required'));
+        }
+
+        // Validate email format using a simple regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return callback(new Error('Invalid email format'));
+        }
+
+        // Validate password strength:
+        // - At least 6 characters
+        // - At least one uppercase letter
+        // - At least one special character
+        // - At least one number
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        if (!passwordRegex.test(password)) {
+            return callback(new Error(constantMessage.PasswordValidation));
+        }
+
+        // Validate username length (for example, minimum 3 characters)
+        if (username.trim().length < 3) {
+            return callback(new Error('Username must be at least 3 characters long'));
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -74,7 +112,7 @@ export const signup = async (email: string, username: string, password: string, 
         await newUser.save();
 
         // Respond with success
-        return callback(null, { message: 'User created successfully', user: newUser });
+        return callback(null, { message: constantMessage.SignupSuccess, user: newUser });
     } catch (error: any) {
         return callback(new Error(error.message), undefined);
     }
@@ -82,6 +120,17 @@ export const signup = async (email: string, username: string, password: string, 
 
 async function sendLink(email: string, callback: any): Promise<{ status?: any, message?: string }> {
     try {
+        // Basic field presence check
+        if (!email) {
+            return callback(new Error('Email required'));
+        }
+
+        // Validate email format using a simple regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return callback(new Error('Invalid email format'));
+        }
+        
         const resetToken = generateRandomPassword(16);
         const expiry = new Date(Date.now() + 3600000); // 1 hour from now
 
@@ -117,7 +166,7 @@ async function sendLink(email: string, callback: any): Promise<{ status?: any, m
                 console.error('Error occurred while sending email:', error.message);
             }
         });
-        return callback(null, { status: 200, message: 'Password reset email sent successfully' });
+        return callback(null, { status: 200, message: constantMessage.MailSentSuccess });
 
     } catch (err) {
         return callback(err, null);
@@ -144,7 +193,7 @@ async function resetPassword(password: any, resetToken: any, callback: any) {
         await user.save();
 
         // Respond with success
-        return callback(null, { message: 'Password reset successfully' });
+        return callback(null, { message: constantMessage.ResetSuccess });
     } catch (error) {
         return callback(new Error('Internal server error'), undefined);
     }

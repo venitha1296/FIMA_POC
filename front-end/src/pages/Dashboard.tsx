@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <i className="bi bi-code"></i>
                 <ul>
-                    <li><a href="" className="active"><img src="/assets/images/menu-home.svg" alt="home" />Home</a></li>
+                    <li><a href="/dashboard" className="active"><img src="/assets/images/menu-home.svg" alt="home" />Home</a></li>
                     <li><a href=""><img src="/assets/images/menu-document-code.svg" alt="all" />All Data Agents</a></li>
                     <li><a href=""><img src="/assets/images/menu-building-4.svg" alt="corporate" />Corporate Registry Agent</a></li>
                     <li><a href=""><img src="/assets/images/menu-send.svg" alt="finance" />Financial Data Agent</a></li>
@@ -45,12 +45,13 @@ const Dashboard: React.FC = () => {
                     <div className="d-flex justify-content-end">
                         <div className="d-flex align-items-center">
                             <div className="profile-name">{profileName}</div>
-                            <div class="dropdown">
+                            <div className="dropdown">
                               <img className="profile-image img-fluid cursor" data-bs-toggle="dropdown"
                               src="/assets/images/profile-pic.jpg" alt="" />
-                              <ul class="dropdown-menu py-1 border-0 shadow-sm">
-                                <li><a class="dropdown-item border-bottom fs-14 cursor jacarta" href="">My Profile</a></li>
-                                <li><a class="dropdown-item text-danger fs-14 cursor" onClick={handleLogout}>Logout</a></li>
+                              <ul className="dropdown-menu py-1 border-0 shadow-sm">
+                                <li><a className="dropdown-item border-bottom fs-14 cursor jacarta" href="">My Profile</a></li>
+                                <li><a className="dropdown-item border-bottom fs-14 cursor jacarta" href="/change-password">Change Password</a></li>
+                                <li><a className="dropdown-item text-danger fs-14 cursor" onClick={handleLogout}>Logout</a></li>
                               </ul>
                             </div>
                         </div>

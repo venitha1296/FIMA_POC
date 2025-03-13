@@ -4,7 +4,7 @@
 import { Request, Response } from "express";
 import Country from "../models/Country";
 import AgentRegistry from "../models/AgentRegistry";
-import { sendSuccess, sendError } from '../utils/responseHandler';
+import { sendSuccess, sendError, constantMessage } from '../utils/responseHandler';
 import { constants } from "../config/config";
 
 export interface ValidationResult {
@@ -102,7 +102,7 @@ export function validateAgentPayload(payload: any): ValidationResult {
     ) {
         return {
             isValid: false,
-            message: "Country is required for Corporate Registry Agent and Web Research Media Agent",
+            message: "Country is required",
             status: 400,
         };
     }
@@ -120,7 +120,7 @@ export async function fetchAgentsWithPagination(req: Request, res: Response) {
         const agents = await AgentRegistry.find()
             .skip(skip)
             .limit(limit)
-            .populate("file_output_id");
+            .populate("file_output");
 
         const totalRecords = await AgentRegistry.countDocuments();
         const totalPages = Math.ceil(totalRecords / limit);
@@ -134,7 +134,7 @@ export async function fetchAgentsWithPagination(req: Request, res: Response) {
 
         // Use the custom success response.
         if (!res.headersSent) {
-            return sendSuccess(res, responseData, 'Agents fetched successfully!');
+            return sendSuccess(res, responseData, constantMessage.AgentsFetchSuccess);
         }
     } catch (error) {
         console.error('Error fetching agents:', error);
@@ -156,7 +156,7 @@ export async function createAgent(req: Request, res: Response): Promise<Response
             res,
             new Error(validationResult.message),
             validationResult.message,
-            validationResult.status || 400
+            validationResult.status ?? 400
         );
     }
     // Destructure values from the payload
@@ -168,14 +168,14 @@ export async function createAgent(req: Request, res: Response): Promise<Response
             type,
             company,
             country: (type === constants.Corporate || type === constants.Web) ? country : undefined,
-            source_url: type === constants.Web ? source_url : undefined,
+            source_url: source_url ?? null,
             status: constants.Processing,      // Set status as "Processing"
             request_time: new Date(),  // Record the request time
             response_time: null,       // Response time is not set yet
         });
 
         await newAgent.save();
-        return sendSuccess(res, newAgent, "Agent request created successfully", 201);
+        return sendSuccess(res, newAgent, constantMessage.AgentRequestSuccess, 201);
     } catch (error) {
         console.error("Error creating agent:", error);
         return sendError(res, error, "Error creating agent request");
@@ -223,7 +223,7 @@ export async function updateAgentWithOutput(req: Request, res: Response): Promis
             );
         }
 
-        return sendSuccess(res, updatedAgent, "Agent updated with AI output successfully", 200);
+        return sendSuccess(res, updatedAgent, constantMessage.AgentUpdateSuccess, 200);
     } catch (error) {
         console.error("Error updating agent:", error);
         return sendError(res, error, "Error updating agent");

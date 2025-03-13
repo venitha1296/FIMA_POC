@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Protected from './pages/Protected';
 import DashboardList from './pages/DashboardList';
 import CorporateRegistry from './pages/CorporateRegistry';
+import ChangePassword from './pages/ChangePassword';
 
 
 
@@ -27,6 +28,7 @@ function App() {
     { path: '/dashboard', element: <Protected Component={Dashboard} /> },
     { path: '/agents', element: <DashboardList /> },
     { path: '/corporate-registry', element: <CorporateRegistry /> },
+    { path: '/change-password', element: <Protected Component={ChangePassword} /> },
 
   ])
 
