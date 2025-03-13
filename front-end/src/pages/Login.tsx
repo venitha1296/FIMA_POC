@@ -1,7 +1,6 @@
 import "../styles/style.scss";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate from react-router-dom
-import axios from 'axios'; // Import axios for API requests
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
