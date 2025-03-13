@@ -27,7 +27,7 @@ function App() {
     { path: '/dashboard', element: <Protected Component={Dashboard} /> },
     { path: '/agents', element: <DashboardList /> },
     { path: '/corporate-registry', element: <CorporateRegistry /> },
-   
+
   ])
 
   return (
@@ -36,4 +36,3 @@ function App() {
 }
 
 export default App;
-

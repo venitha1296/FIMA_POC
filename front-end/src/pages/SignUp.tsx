@@ -79,9 +79,9 @@ const SignUp = () => {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
                     toast.success('Signup successful!', {
-                        icon: <i className="bi bi-check-circle-fill"></i>,              
-                        className: "toast-success",   
-                        autoClose: 2000,               
+                        icon: <i className="bi bi-check-circle-fill"></i>,
+                        className: "toast-success",
+                        autoClose: 2000,
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -97,8 +97,8 @@ const SignUp = () => {
                 // Show error toast
                 toast.error(errorMessage, {
                     icon: <i className="bi bi-exclamation-triangle-fill"></i>,
-                    className: "toast-error",   
-                    autoClose: 2000,               
+                    className: "toast-error",
+                    autoClose: 2000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -123,7 +123,7 @@ const SignUp = () => {
                 </div>
             </div>
             <div className="login-form">
-                <div className="login-form__block">
+                <div className="login-form__block py-5">
                     <img src="/assets/images/login-logo.svg" alt="site logo" />
                     <h2>Signup</h2>
                     <div className="mb-4 position-relative">

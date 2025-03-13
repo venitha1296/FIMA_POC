@@ -84,8 +84,8 @@ const ForgotPassword = () => {
                 // Show error toast
                 toast.error(errorMessage, {
                     icon: <i className="bi bi-exclamation-triangle-fill"></i>,
-                    className: "toast-error",   
-                    autoClose: 2000,               
+                    className: "toast-error",
+                    autoClose: 2000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -112,9 +112,9 @@ const ForgotPassword = () => {
                 </div>
             </div>
             <div className="login-form">
-                <div className="login-form__block">
-                    <img src="/assets/images/mailbox.png" alt="site logo" />
-                    <h2>Forgot Your Password</h2>
+                <div className="login-form__block py-5">
+                    <img src="/assets/images/mail-open.svg" alt="site logo" />
+                    <h2 className="mb-3">Forgot Your Password</h2>
                     <p className="msg-label">We will email you a link to reset your password.</p>
                     <div className="mb-4 position-relative">
                         <label className="form-label">Email<span className="mandatory">*</span></label>
@@ -138,7 +138,7 @@ const ForgotPassword = () => {
                         </button>
                     </div>
                     <div className="">
-                        <button type="button" className="btn btn-back" onClick={handleBack}>
+                        <button type="button" className="btn btn-back mt-2" onClick={handleBack}>
                             Back to Sign in
                         </button>
                     </div>

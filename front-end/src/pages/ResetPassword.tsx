@@ -89,9 +89,9 @@ const ResetPassword = () => {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
                     toast.success('Password Changed successfully!', {
-                        icon: <i className="bi bi-check-circle-fill"></i>,              
-                        className: "toast-success",   
-                        autoClose: 2000,               
+                        icon: <i className="bi bi-check-circle-fill"></i>,
+                        className: "toast-success",
+                        autoClose: 2000,
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -107,8 +107,8 @@ const ResetPassword = () => {
                 // Show error toast
                 toast.error(errorMessage, {
                     icon: <i className="bi bi-exclamation-triangle-fill"></i>,
-                    className: "toast-error",   
-                    autoClose: 2000,               
+                    className: "toast-error",
+                    autoClose: 2000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -134,7 +134,7 @@ const ResetPassword = () => {
             <div className="login-form">
                 <div className="login-form__block">
                     <img src="/assets/images/login-logo.svg" alt="site logo" />
-                    <h2>Change Your Password</h2>
+                    <h2 className="mb-3">Change Your Password</h2>
                     <p className="msg-label">Enter a new password below to change your password</p>
                     <div className="mb-2 position-relative">
                         <label className="form-label">New Password<span className="mandatory">*</span></label>
@@ -174,7 +174,7 @@ const ResetPassword = () => {
                             <i className={`bi ${showConfirmPassword ? "bi-eye" : "bi-eye-slash"} form-icon`} onClick={() => setShowConfirmPassword(!showConfirmPassword)}></i>
                         </div>
                     </div>
-               
+
                     <div className="">
                         <button type="button" className="btn btn-primary" onClick={handleSubmit}>Change Password</button>
                     </div>
