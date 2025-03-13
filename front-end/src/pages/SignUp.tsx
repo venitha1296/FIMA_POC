@@ -189,7 +189,7 @@ const SignUp = () => {
                         </button>
                     </div>
                     <div className="d-flex gap-2">
-                        <a href="login" className="link-text text-line jacarta">Already have an account?</a><a href="/login" className="link-text text-line jacarta active">Sign In</a>
+                        <a className="link-text jacarta">Already have an account?</a><a href="/login" className="link-text text-line jacarta active">Sign In</a>
                     </div>
                 </div>
             </div>
