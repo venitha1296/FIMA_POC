@@ -75,6 +75,7 @@ const SignUp = () => {
             setIsLoading(true); // Start loading
             try {
                 const response = await ApiFinder.post("/signup", formData); // Your backend API endpoint for signup
+                console.log(response.data.status);
                 if (response.status === 200) {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
@@ -92,7 +93,7 @@ const SignUp = () => {
                     }, 2000);
                 }
             } catch (error: any) {
-                const errorMessage = error.response?.data?.message || "Signup failed! Please try again.";
+                const errorMessage = error.response?.data?.error || "Signup failed! Please try again.";
                 // Handle any API errors here, for example showing a general error message
                 // Show error toast
                 toast.error(errorMessage, {
