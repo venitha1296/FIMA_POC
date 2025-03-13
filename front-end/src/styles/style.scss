@@ -270,6 +270,10 @@ a {
   }
 }
 
+.sidebar.minimized {
+  width: 85px; /* Minimized width */
+}
+
 .main-section {
   background: #f9fafb;
   width: calc(100vw - 256px);
