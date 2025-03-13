@@ -1,10 +1,10 @@
 import "../styles/style.scss";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate from react-router-dom
-import axios from 'axios'; // Import axios for API requests
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
+import ApiFinder from "../apis/ApiFinder";
 
 
 const Login = () => {
@@ -74,7 +74,7 @@ const Login = () => {
     if (validateForm()) {
       setIsLoading(true); // Start loading
       try {
-        const response = await axios.post("http://localhost:3001/api/login", formData); // Your backend API endpoint for login
+        const response = await ApiFinder.post("/login", formData); // Your backend API endpoint for login
 
         if (response.status === 200) {
           // On successful signup, you can redirect to login or show a success message
@@ -82,8 +82,9 @@ const Login = () => {
           localStorage.setItem("authToken", response.data.token);
           localStorage.setItem("tokenStatus", 'login');
           toast.success('Login successful! Redirecting', {
-            position: "top-right",
-            autoClose: 5000, // Automatically closes after 5 seconds
+            icon: <i className="bi bi-check-circle-fill"></i>,
+            className: "toast-success",
+            autoClose: 2000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
@@ -100,7 +101,8 @@ const Login = () => {
 
         // Show error toast
         toast.error(errorMessage, {
-          position: "top-right",
+          icon: <i className="bi bi-exclamation-triangle-fill"></i>,
+          className: "toast-error",
           autoClose: 2000,
           hideProgressBar: true,
           closeOnClick: true,
@@ -170,11 +172,11 @@ const Login = () => {
           </div>
           <div className="">
             <button type="button" className="btn btn-primary" onClick={handleSubmit}
-            disabled={isLoading} // Disable button when loading
+              disabled={isLoading} // Disable button when loading
             >
               {isLoading ? (
                 <>
-                <span className="spinner-border spinner-border-sm me-2"></span>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
                   Signing in...
                 </>
               ) : (

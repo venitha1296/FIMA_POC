@@ -1,14 +1,16 @@
 import "../styles/style.scss";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom'; // Importing useNavigate from react-router-dom
-import axios from 'axios'; // Import axios for API requests
+import { useNavigate, useLocation } from 'react-router-dom'; // Importing useNavigate from react-router-dom
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
+import ApiFinder from "../apis/ApiFinder";
 
 
 const ResetPassword = () => {
-    const { resetToken } = useParams(); // Get token from URL
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const resetToken = queryParams.get("resetToken");
     console.log("resetToken", resetToken)
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -25,10 +27,10 @@ const ResetPassword = () => {
 
     // Redirect to login if token is missing
     useEffect(() => {
-        // if (!resetToken) {
-        //     toast.error('Invalid reset link.', { position: "top-right", autoClose: 5000 });
-        //     navigate("/login");
-        // }
+        if (!resetToken) {
+            toast.error('Invalid reset link.', { position: "top-right", autoClose: 5000 });
+            navigate("/login");
+        }
     }, [resetToken, navigate]);
 
     // Handle form input change
@@ -38,6 +40,10 @@ const ResetPassword = () => {
             ...formData,
             [name]: value,
         });
+    };
+
+    const handleBack= () => {
+        navigate('/login');
     };
 
     // Validate form fields
@@ -74,7 +80,7 @@ const ResetPassword = () => {
         // If there are errors, do not proceed with the API call
         if (validateForm()) {
             try {
-                const response = await axios.post("http://localhost:3001/api/resetPassword", {
+                const response = await ApiFinder.post("/resetPassword", {
                     password: formData.password,
                     resetToken, // Send token to backend
                 });
@@ -82,9 +88,10 @@ const ResetPassword = () => {
                 if (response.status === 200) {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
-                    toast.success('Reset successful!', {
-                        position: "top-right",
-                        autoClose: 2000, // Automatically closes after 5 seconds
+                    toast.success('Password Changed successfully!', {
+                        icon: <i className="bi bi-check-circle-fill"></i>,              
+                        className: "toast-success",   
+                        autoClose: 2000,               
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -95,12 +102,13 @@ const ResetPassword = () => {
                     }, 2000);
                 }
             } catch (error:any) {
-                const errorMessage = error.response?.data?.message || "Reset password failed! Please try again.";
+                const errorMessage = error.response?.data?.message || "Change password failed! Please try again.";
                 // Handle any API errors here, for example showing a general error message
                 // Show error toast
                 toast.error(errorMessage, {
-                    position: "top-right",
-                    autoClose: 2000,
+                    icon: <i className="bi bi-exclamation-triangle-fill"></i>,
+                    className: "toast-error",   
+                    autoClose: 2000,               
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -126,24 +134,26 @@ const ResetPassword = () => {
             <div className="login-form">
                 <div className="login-form__block">
                     <img src="/assets/images/login-logo.svg" alt="site logo" />
-                    <h2>Reset Password</h2>
-                    <div className="mb-4 position-relative">
-                        <label className="form-label">Password<span className="mandatory">*</span></label>
+                    <h2>Change Your Password</h2>
+                    <p className="msg-label">Enter a new password below to change your password</p>
+                    <div className="mb-2 position-relative">
+                        <label className="form-label">New Password<span className="mandatory">*</span></label>
+                        <div className="position-relative">
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
-                            placeholder="Enter Passowrd"
+                            placeholder="Enter Password"
                             value={formData.password}
                             className="form-control"
                             onChange={handleChange}
                         />
-                        {errors.password &&
-                            <div className="alert alert-danger" role="alert">
-                                {errors.password}
-                            </div>
-                        }
-                        <i className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"} form-icon`} onClick={() => setShowPassword(!showPassword)}></i>
-
+                            {errors.password &&
+                                <div className="alert alert-danger" role="alert">
+                                    {errors.password}
+                                </div>
+                            }
+                            <i className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"} form-icon`} onClick={() => setShowPassword(!showPassword)}></i>
+                        </div>
                     </div>
                     <div className="mb-2 position-relative">
                         <label className="form-label">Confirm Password<span className="mandatory">*</span></label>
@@ -164,15 +174,15 @@ const ResetPassword = () => {
                             <i className={`bi ${showConfirmPassword ? "bi-eye" : "bi-eye-slash"} form-icon`} onClick={() => setShowConfirmPassword(!showConfirmPassword)}></i>
                         </div>
                     </div>
+               
                     <div className="">
-                        <a href="" className="link-text text-line active">Forgot Password?</a>
+                        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Change Password</button>
                     </div>
                     <div className="">
-                        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Reset Password</button>
+                        <button type="button" className="btn btn-back" onClick={handleBack}>
+                        Back to Sign in
+                        </button>
                     </div>
-                    {/* <div className="d-flex gap-2">
-                        <a href="" className="link-text text-line jacarta">Not yet registered?</a><a href="" className="link-text text-line jacarta active">Create an account here</a>
-                    </div> */}
                 </div>
             </div>
             <ToastContainer />

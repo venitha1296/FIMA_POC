@@ -2,14 +2,18 @@ body {
   font-family: "Manrope", sans-serif;
   font-style: normal;
 }
+
 ul {
   padding: 0;
   margin: 0;
   list-style: none;
 }
+
+ul,
 li {
   list-style: none;
 }
+
 a {
   text-decoration: none;
 }
@@ -34,6 +38,7 @@ a {
     font-weight: 300;
   }
 }
+
 .login-banner__bg-circle--first-ring {
   border: 1px solid #0575E6;
   width: 480px;
@@ -43,6 +48,7 @@ a {
   bottom: -40%;
   left: -22%;
 }
+
 .login-banner__bg-circle--second-ring {
   border: 1px solid #0575E6;
   width: 480px;
@@ -52,9 +58,11 @@ a {
   bottom: -43%;
   left: -13%;
 }
+
 .login-form {
   width: 50%;
 }
+
 .login-form__block {
   box-shadow: 0px 8px 24px 0px #959DA533;
   background: #FFFFFF;
@@ -112,9 +120,11 @@ a {
     }
   }
 }
+
 .jacarta {
   color: #272C68 !important;
 }
+
 .cobalt {
   color: #0051B0 !important;
 }
@@ -124,6 +134,7 @@ a {
 .cursor {
   cursor: pointer;
 }
+
 .text-line {
   text-decoration: underline;
 }
@@ -216,6 +227,7 @@ a {
     cursor: pointer;
   }
 }
+
 .sidebar--logo {
   border-bottom: 1px solid #3374c0;
   padding: 15px 30px 15px;
@@ -363,55 +375,63 @@ a {
 }
 
 
-@media (min-width: 1200px) {  }
+@media (min-width: 1200px) {}
 
 
-@media (min-width: 1400px) {  }
+@media (min-width: 1400px) {}
 
 
-@media (max-width: 575.98px) {  }
+@media (max-width: 575.98px) {}
 
 
-@media (max-width: 767.98px) {  }
+@media (max-width: 767.98px) {}
 
 
-@media (max-width: 991.98px) {  }
+@media (max-width: 991.98px) {}
 
 
-@media (max-width: 1199.98px) {  }
+@media (max-width: 1199.98px) {}
 
 
-@media (max-width: 1399.98px) {  }
+@media (max-width: 1399.98px) {}
 
 @media (min-width: 320px) and (max-width: 767.98px) {
+
   .login-banner,
   .login-form {
     width: 100%;
   }
+
   .login-banner {
     height: auto !important;
     padding: 20px 30px 5px;
   }
+
   .login-form__block {
     padding: 25px;
   }
+
   .login-form__block h2 {
     margin: 15px 0;
   }
+
   .login-banner h2 {
     line-height: 27px;
     font-size: 20px;
   }
+
   .login-banner p {
     font-size: 13px;
   }
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
+
   .login-banner,
   .login-form {
     width: 100%;
   }
+
   .login-banner {
     height: auto !important;
     padding: 30px;
@@ -419,4 +439,4 @@ a {
 
 }
 
-@media (min-width: 768px) and (max-width: 1199.98px) {  }
+@media (min-width: 768px) and (max-width: 1199.98px) {}

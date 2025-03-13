@@ -1,10 +1,10 @@
 import "../styles/style.scss";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate from react-router-dom
-import axios from 'axios'; // Import axios for API requests
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
+import ApiFinder from "../apis/ApiFinder";
 
 
 const ForgotPassword = () => {
@@ -25,6 +25,10 @@ const ForgotPassword = () => {
             ...formData,
             [name]: value,
         });
+    };
+
+    const handleBack = () => {
+        navigate('/login');
     };
 
     // Validate form fields
@@ -54,14 +58,15 @@ const ForgotPassword = () => {
         if (validateForm()) {
             setIsLoading(true); // Start loading
             try {
-                const response = await axios.post("http://localhost:3001/api/sendLink", formData); // Your backend API endpoint for login
+                const response = await ApiFinder.post("/sendLink", formData); // Your backend API endpoint for login
                 console.log(response.data.status);
                 if (response.data && response.data.status == 200) {
                     // On successful signup, you can redirect to login or show a success message
                     // Show success toast
                     toast.success('Mail sent successfully!', {
-                        position: "top-right",
-                        autoClose: 2000, // Automatically closes after 5 seconds
+                        icon: <i className="bi bi-check-circle-fill"></i>,
+                        className: "toast-success",
+                        autoClose: 2000,
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -78,8 +83,9 @@ const ForgotPassword = () => {
                 // Handle any API errors here, for example showing a general error message
                 // Show error toast
                 toast.error(errorMessage, {
-                    position: "top-right",
-                    autoClose: 2000,
+                    icon: <i className="bi bi-exclamation-triangle-fill"></i>,
+                    className: "toast-error",   
+                    autoClose: 2000,               
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -107,10 +113,11 @@ const ForgotPassword = () => {
             </div>
             <div className="login-form">
                 <div className="login-form__block">
-                    <img src="/assets/images/login-logo.svg" alt="site logo" />
-                    <h2>Forgot Password</h2>
+                    <img src="/assets/images/mailbox.png" alt="site logo" />
+                    <h2>Forgot Your Password</h2>
+                    <p className="msg-label">We will email you a link to reset your password.</p>
                     <div className="mb-4 position-relative">
-                        <label className="form-label">Enter Your Email<span className="mandatory">*</span></label>
+                        <label className="form-label">Email<span className="mandatory">*</span></label>
                         <input
                             type="email"
                             name="email"
@@ -130,8 +137,10 @@ const ForgotPassword = () => {
                             Send Link
                         </button>
                     </div>
-                    <div className="d-flex gap-2">
-                        <a href="/login" className="link-text text-line jacarta active">Back to Login?</a>
+                    <div className="">
+                        <button type="button" className="btn btn-back" onClick={handleBack}>
+                            Back to Sign in
+                        </button>
                     </div>
                 </div>
             </div>

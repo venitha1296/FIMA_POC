@@ -49,9 +49,9 @@ router.post('/sendLink', (req, res) => {
 })
 
 router.post('/resetPassword', (req, res) => {
-    const { newPassword, resetToken } = req.body;
+    const { password, resetToken } = req.body;
 
-    pageLogin.resetPassword(newPassword, resetToken, (err, results) => {
+    pageLogin.resetPassword(password, resetToken, (err, results) => {
         if (err) {
             res.status(500).json({ error: err.message });
         }

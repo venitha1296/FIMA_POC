@@ -1,9 +1,14 @@
 import "../styles/style.scss";
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS file
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useNavigate } from 'react-router-dom'; // Importing useNavigate from react-router-dom
 
 
 const SendLink = () => {
+    const navigate = useNavigate(); // Hook for navigation
+    const handleBack= () => {
+        navigate('/login');
+    };
     return (
         <div className="d-flex flex-xl-row flex-lg-row flex-md-column flex-column align-items-center vh-100 overflow-xl-hidden">
             <div className="login-banner position-relative h-100 d-flex justify-content-center flex-column">
@@ -17,13 +22,16 @@ const SendLink = () => {
             </div>
             <div className="login-form">
                 <div className="login-form__block">
-                    <img src="/assets/images/login-logo.svg" alt="site logo" />
-                    <h2>Reset Password Link</h2>
-                    <p>If the email you submitted was found on our database we will send you
-                            a one time link to reset your password. <br /><br />If you do not
-                            recieve an email (check your junk mail) then &nbsp; </p>
+                    <img src="/assets/images/mailbox.png" alt="site logo" />
+                    <h2>Reset Your Password</h2>
+                    <p className="msg-label">We have sent an email to your email address with instructions to reset your password.</p>
                     <div className="d-flex gap-2">
                         <a href="/forgot" className="link-text text-line jacarta active">Submit Another Request?</a>
+                    </div>
+                    <div className="">
+                        <button type="button" className="btn btn-primary" onClick={handleBack}>
+                        Back to Sign in
+                        </button>
                     </div>
                 </div>
             </div>
