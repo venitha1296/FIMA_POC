@@ -30,7 +30,8 @@ const agentSchema = new mongoose.Schema({
     },
     otp: { type: String },
     is_failed: { type: Number },
-    keyword: { type: String }
+    keyword: { type: String },
+    is_deleted: { type: Boolean, default: false }  // Soft delete flag
 }, { timestamps: true });
 
 const AgentRegistry = mongoose.model("Agent", agentSchema);

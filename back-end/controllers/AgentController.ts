@@ -291,17 +291,18 @@ export async function receiveFinalOutput(req: Request, res: Response) {
  */
 export async function deleteAgent(req: Request, res: Response): Promise<Response> {
     try {
-        const agent = await AgentRegistry.findByIdAndDelete(req.params.id);
+        const agent = await AgentRegistry.findByIdAndUpdate(
+            req.params.id,
+            { is_deleted: true },
+            { new: true }
+        );
+
         if (!agent) {
-            return sendError(
-                res,
-                new Error("Agent not found"),
-                "No agent found with the provided id",
-                404
-            );
+            return sendError(res, new Error("Agent not found"), "No agent found with the provided ID", 404);
         }
-        return sendSuccess(res, null, constantMessage.RequestDeleteSuccess, 200);
+
+        return sendSuccess(res, agent, constantMessage.RequestDeleteSuccess, 200);
     } catch (err: any) {
-        return sendError(res, err.message, "Error deleting agent");
+        return sendError(res, err.message, "Error marking agent as deleted");
     }
 }
