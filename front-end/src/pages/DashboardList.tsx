@@ -228,17 +228,17 @@ const DashboardList: React.FC = () => {
                        <label>of 50</label>
                      </div>
                      <nav>
-                       <ul class="pagination justify-content-end">
-                         <li class="page-item disabled">
-                           <a class="page-link"><i className="bi bi-chevron-left"></i></a>
+                       <ul className="pagination justify-content-end">
+                         <li className="page-item disabled">
+                           <a className="page-link"><i className="bi bi-chevron-left"></i></a>
                          </li>
-                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                         <li class="page-item"><a class="page-link" href="#">2</a></li>
-                         <li class="page-item"><a class="page-link" href="#">3</a></li>
-                         <li class="page-item"><a class="page-link" href="#">4</a></li>
-                         <li class="page-item"><a class="page-link" href="#">5</a></li>
-                         <li class="page-item">
-                           <a class="page-link" href="#"><i className="bi bi-chevron-right"></i></a>
+                         <li className="page-item active"><a className="page-link" href="#">1</a></li>
+                         <li className="page-item"><a className="page-link" href="#">2</a></li>
+                         <li className="page-item"><a className="page-link" href="#">3</a></li>
+                         <li className="page-item"><a className="page-link" href="#">4</a></li>
+                         <li className="page-item"><a className="page-link" href="#">5</a></li>
+                         <li className="page-item">
+                           <a className="page-link" href="#"><i className="bi bi-chevron-right"></i></a>
                          </li>
                        </ul>
                      </nav>

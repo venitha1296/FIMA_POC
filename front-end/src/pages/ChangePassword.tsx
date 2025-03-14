@@ -163,12 +163,12 @@ const ChangePassword = () => {
                     </div>
                 </header>
                 <section>
-                <div className="login-form">
-                <div className="login-form__block">
-                    <img src="/assets/images/mail-open.svg" alt="site logo" />
-                    <h2 className="mb-3">Change Your Password</h2>
-                    <p className="msg-label">Enter a new password below to change your password</p>
-                    <div className="mb-2 position-relative">
+                <div className="login-form w-100 px-5">
+                <div className="login-form__block py-4 px-4 mw-100 shadow-none">
+                  <div className="col-sm-4">
+                    <h2 className="mb-3 mt-2">Change Your Password</h2>
+                    <p className="msg-label mb-4 pb-3">Enter a new password below to change your password</p>
+                    <div className="mb-4 position-relative">
                         <label className="form-label">New Password<span className="mandatory">*</span></label>
                         <div className="position-relative">
                             <input
@@ -206,15 +206,15 @@ const ChangePassword = () => {
                             <i className={`bi ${showConfirmPassword ? "bi-eye" : "bi-eye-slash"} form-icon`} onClick={() => setShowConfirmPassword(!showConfirmPassword)}></i>
                         </div>
                     </div>
-
                     <div className="">
                         <button type="button" className="btn btn-primary" onClick={handleSubmit}>Change Password</button>
                     </div>
                     <div className="">
-                        <button type="button" className="btn btn-back" onClick={handleBack}>
+                        <button type="button" className="btn btn-back mt-2" onClick={handleBack}>
                             Back to Sign in
                         </button>
                     </div>
+                  </div>
                 </div>
             </div>
                 </section>
@@ -223,7 +223,7 @@ const ChangePassword = () => {
         </div>
 
     );
-  
+
 };
 
 export default ChangePassword;

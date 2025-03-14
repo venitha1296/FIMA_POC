@@ -223,6 +223,7 @@ a {
   background: #0051B0;
   box-shadow: -1px 0px 0px 0px #9999991A inset;
   position: relative;
+  height: 100vh;
   .bi-code {
     color: #000000;
     border-radius: 8px;
@@ -387,21 +388,21 @@ a {
 }
 
 .toast-success {
-  background-color: #4caf50 !important; 
-  color: #ffffff !important;           
-  border-radius: 8px !important;       
-  font-size: 16px !important;         
-  display: flex !important;           
-  align-items: center !important;     
+  background-color: #4caf50 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .toast-error {
-  background-color: #f44336 !important; 
-  color: #ffffff !important;  
-  border-radius: 8px !important;   
-  font-size: 16px !important;    
-  display: flex !important;         
-  align-items: center !important;    
+  background-color: #f44336 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .grid-view {
