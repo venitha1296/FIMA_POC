@@ -7,8 +7,10 @@ export const constantMessage = {
     MailSentSuccess: "Password reset email sent successfully",
     ResetSuccess: "Password reset successfully", 
     AgentsFetchSuccess: "Agents fetched successfully!",
-    AgentRequestSuccess: "Agent request created successfully!",
-    AgentUpdateSuccess: "Agent updated with AI output successfully",
+    RequestInitiateSuccess: "Agent request initiated successfully!",
+    RequestUpdateSuccess: "Agent updated with AI output successfully",
+    RequestDeleteSuccess : "Agent deleted successfully",
+    OTPSuccess : "OTP stored successfully",
     PasswordValidation: 'Password must be at least 6 characters long, include at least one uppercase letter, one number, and one special character'
 };
 

@@ -1,7 +1,7 @@
 // agentRoutes.ts
 //@ts-ignore
 import { Router } from "express";
-import { fetchCountries, upsertCountries, insertCountry, fetchAgentsWithPagination, createAgent } from "../controllers/AgentController";
+import { fetchCountries, upsertCountries, insertCountry, fetchAgentsWithPagination, sendAgentRequest, deleteAgent } from "../controllers/AgentController";
 
 const router = Router();
 
@@ -13,7 +13,9 @@ router.post("/country", insertCountry);
 
 router.get("/", fetchAgentsWithPagination);
 
-router.post("/", createAgent);
+router.post("/", sendAgentRequest);
+
+router.delete("/:id", deleteAgent);
 
 module.exports = router;
 

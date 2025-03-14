@@ -13,7 +13,7 @@ const agentSchema = new mongoose.Schema({
     country: { type: String }, // Only for corporate & web
     status: {
         type: String,
-        enum: ["Processing", "Completed"],
+        enum: ["Processing", "Completed", "Failed"],
         default: "Processing"
     },
     fromDate: { type: Date },
@@ -28,8 +28,11 @@ const agentSchema = new mongoose.Schema({
         enum: ["News & Media", "Market Reports", "Social Sentiment", "Competitor Analysis"],
         default: []
     },
-    keyword: { type: String }
-});
+    otp: { type: String },
+    is_failed: { type: Number },
+    keyword: { type: String },
+    is_deleted: { type: Boolean, default: false }  // Soft delete flag
+}, { timestamps: true });
 
 const AgentRegistry = mongoose.model("Agent", agentSchema);
 

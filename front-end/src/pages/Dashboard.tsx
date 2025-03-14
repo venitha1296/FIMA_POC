@@ -2,6 +2,8 @@ import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
 import "../styles/style.scss";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../Components/Sidebar";
+import Header from "../Components/Header";
 
 const Dashboard: React.FC = () => {
     const [profileName, setProfileName] = useState<string>("");
@@ -34,46 +36,9 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="d-flex">
-            <aside className={`sidebar ${isMinimized ? "minimized" : ""}`}>
-                <div className="sidebar--logo">
-                    <img className="img-fluid" alt="logo" src="/assets/images/header-logo.svg" />
-                </div>
-                <i className="bi bi-code" onClick={toggleSidebar}></i>
-                <ul>
-                    <li><a href="/dashboard" className="active"><img src="/assets/images/menu-home.svg" alt="home" />
-                        {!isMinimized && "Home"}
-                    </a></li>
-                    <li><a href=""><img src="/assets/images/menu-document-code.svg" alt="all" />
-                        {!isMinimized && "All Data Agents"}
-                    </a></li>
-                    <li><a href=""><img src="/assets/images/menu-building-4.svg" alt="corporate" />
-                        {!isMinimized && "Corporate Registry Agent"}
-                    </a></li>
-                    <li><a href=""><img src="/assets/images/menu-send.svg" alt="finance" />
-                        {!isMinimized && "Financial Data Agent"}
-                    </a></li>
-                    <li><a href=""><img src="/assets/images/home-global-search.svg" alt="web" />
-                        {!isMinimized && "Web Research Media Agent"}
-                    </a></li>
-                </ul>
-            </aside>
+            <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-                <header>
-                    <div className="d-flex justify-content-end">
-                        <div className="d-flex align-items-center">
-                            <div className="profile-name">{profileName}</div>
-                            <div className="dropdown">
-                                <img className="profile-image img-fluid cursor" data-bs-toggle="dropdown"
-                                    src="/assets/images/profile-pic.jpg" alt="" />
-                                <ul className="dropdown-menu py-1 border-0 shadow-sm">
-                                    <li><a className="dropdown-item border-bottom fs-14 cursor jacarta" href="">My Profile</a></li>
-                                    <li><a className="dropdown-item border-bottom fs-14 cursor jacarta" href="/change-password">Change Password</a></li>
-                                    <li><a className="dropdown-item text-danger fs-14 cursor" onClick={handleLogout}>Logout</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </header>
+                <Header profileName={profileName} handleLogout={handleLogout} />
                 <section>
                     <div className="home-welcome-links">
                         <h2 className="jacarta">Accelerate financial decisions with</h2>
