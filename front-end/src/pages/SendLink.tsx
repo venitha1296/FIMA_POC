@@ -21,7 +21,7 @@ const SendLink = () => {
                 </div>
             </div>
             <div className="login-form">
-                <div className="login-form__block">
+                <div className="login-form__block py-5">
                     <img src="/assets/images/mail-open.svg" alt="site logo" />
                     <h2 className="mb-3">Reset Your Password</h2>
                     <p className="msg-label">We have sent an email to your email address with instructions to reset your password.</p>

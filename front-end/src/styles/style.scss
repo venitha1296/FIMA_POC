@@ -223,6 +223,14 @@ a {
   background: #0051B0;
   box-shadow: -1px 0px 0px 0px #9999991A inset;
   position: relative;
+  //height: 100vh;
+  &.minimized {
+    width: 85px;
+    .sidebar--logo {
+      padding: 22px 5px 15px;
+      height: 68px;
+    }
+  }
   .bi-code {
     color: #000000;
     border-radius: 8px;
@@ -269,13 +277,13 @@ a {
   }
 }
 
-.sidebar.minimized {
-  width: 85px; /* Minimized width */
-}
+
 
 .main-section {
   background: #f9fafb;
-  width: calc(100vw - 256px);
+  // width: calc(100vw - 256px);
+  width: 100%;
+  min-height: 100vh;
   header {
     background: #FFFFFF;
     height: 70px;
@@ -387,21 +395,21 @@ a {
 }
 
 .toast-success {
-  background-color: #4caf50 !important; 
-  color: #ffffff !important;           
-  border-radius: 8px !important;       
-  font-size: 16px !important;         
-  display: flex !important;           
-  align-items: center !important;     
+  background-color: #4caf50 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .toast-error {
-  background-color: #f44336 !important; 
-  color: #ffffff !important;  
-  border-radius: 8px !important;   
-  font-size: 16px !important;    
-  display: flex !important;         
-  align-items: center !important;    
+  background-color: #f44336 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .grid-view {
