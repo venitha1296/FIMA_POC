@@ -178,7 +178,7 @@ const ResetPassword = () => {
                         <button type="button" className="btn btn-primary" onClick={handleSubmit}>Change Password</button>
                     </div>
                     <div className="">
-                        <button type="button" className="btn btn-back" onClick={handleBack}>
+                        <button type="button" className="btn btn-back mt-2" onClick={handleBack}>
                         Back to Sign in
                         </button>
                     </div>
@@ -187,8 +187,8 @@ const ResetPassword = () => {
             <ToastContainer />
         </div>
     );
-   
-    
+
+
 };
 
 export default ResetPassword;
