@@ -1,0 +1,171 @@
+{
+    "extracted_data": {
+        "Basic Profile": {
+            "Company Name": "ANYMASTER LTD",
+            "Country": "Cyprus",
+            "Registration Number": "ΗΕ 433152",
+            "Status": "Active",
+            "Type": "Limited Company"
+        },
+        "Contact Details": {
+            "Registered Office Address": "Ευαγόρου, 27, IRENE, Floor 4, Flat 44 1066, Λευκωσία, Κύπρος",
+            "Correspondence Address": "EVAGOROU 31, OFFICE 54, 1066, Telephone: 22255335",
+            "Company Phone": "Not available",
+            "Company Email": "Not available",
+            "Company Website": "Not available"
+        },
+        "Business Activities": {
+            "Industry Classification": "Not specified",
+            "Size Classification": "Not specified",
+            "Business Activity": "Not specified"
+        },
+        "Subsidiaries & Legal Entities": {
+            "Parent Company Name": "Based on available documents, no parent company identified",
+            "Parent Company Country": "N/A",
+            "Subsidiary Company Name": "N/A",
+            "Subsidiary Company Country": "N/A"
+        },
+        "Share Capital": {
+            "Paid-up Capital": 1000,
+            "Issued Capital": 1000,
+            "Authorised Capital": 1000,
+            "Capital, Shares": 1000,
+            "Capital, Nominal value": 1
+        },
+        "Authorised Capital Breakdown": {
+            "type_of_shares": "ΣΥΝΗΘΕΙΣ",
+            "value_per_share": 1,
+            "number_of_authorised_shares": 1000,
+            "total_value_of_authorised_shares": 1000,
+            "issued_shares": 1000,
+            "total_value_of_issued_shares": 1000,
+            "additional_details": {}
+        },
+        "Shareholders": [
+            {
+                "name": "- ALPHA INTERNATIONAL HOLDINGS SINGLE MEMBER S.A.",
+                "address": "Αθηνών, 77 , Αθήνα, Αττική, Ελλάδα"
+            },
+            {
+                "name": "- ALPHA INTERNATIONAL HOLDINGS SINGLE MEMBER S.A. - Example",
+                "address": "Αθηνών, 77 , Αθήνα, Αττική, Ελλάδα - Example"
+            }
+        ],
+        "Management": [
+            {
+                "name": "ΑΝΑΣΤΑΣΙΑ ΣΑΚΕΛΛΑΡΙΟΥ",
+                "appointment_date": "10/07/2023",
+                "termination_date": "11/07/2024",
+                "address": "Σταδίου, 11 Ψυχικό Αθήνα 15452, Ελλάδα",
+                "date_of_apointment": "10/07/2023",
+                "last_date_of_changes": "11/07/2024",
+                "country_of_citizenship": "Ελλάδα"
+            },
+            {
+                "name": "ΜΙΛΤΙΑΔΗΣ ΜΙΧΑΗΛΑΣ",
+                "appointment_date": "28/06/2023",
+                "termination_date": null,
+                "address": "'Εγκωμης, 1 Αραδίππου 7104, Λάρνακα, Κύπρος",
+                "date_of_apointment": "28/06/2023",
+                "last_date_of_changes": "28/06/2023",
+                "country_of_citizenship": "Κύπρος"
+            }
+        ],
+        "Historical Changes": {
+            "Historical Names": [
+                {
+                    "Name": "ANYMASTER LTD",
+                    "Date Changed": "12/04/2022"
+                }
+            ],
+            "Historical Addresses": "Not available",
+            "Change of Directors and Secretaries": []
+        },
+        "Financials": {
+            "Currency": "USD",
+            "Type of Statement": "Balance Statement, Income Statement, Cash Flow Statement",
+            "Audit": "Audited by Deloitte",
+            "Period Ending": "2023-12-31",
+            "Stocks": 1500000,
+            "Debators": null,
+            "Cash and Cash Equivalent": 500000,
+            "Other Current Assets": 250000,
+            "Current Assets": 1575000,
+            "Intangible Fixed Assets": 200000,
+            "Tangible Fixed Assets": 1200000,
+            "Other Fixed Assets (incl. Financial Fixed Assets)": 150000,
+            "Fixed Assets": 1550000,
+            "Total Assets": 3125000,
+            "Capital": 1000000,
+            "Other Shareholders Funds (incl. Reserves)": 250000,
+            "Shareholders Funds": 1250000,
+            "Loans": 300000,
+            "Creditors": 200000,
+            "Other Current Liabilities": 100000,
+            "Current Liabilities": 600000,
+            "Long Term Debt": 400000,
+            "Other non Current Liabilities (incl. Provisions)": 50000,
+            "Non Current Liabilities": 450000,
+            "Net Current Assets": 975000,
+            "Working Capital": 975000,
+            "Total Shareholders Funds and Liabilities": 3125000,
+            "Operating Revenue / Turnover": 5000000,
+            "Sales": 4500000,
+            "Cost of Goods Sold": 2000000,
+            "Gross Profit": 2500000,
+            "Other Operating Expenses": 500000,
+            "Operating Profit (Loss)": 2000000,
+            "Financial Revenue": 100000,
+            "Financial Expenses": 50000,
+            "Financial Profit / Loss": 50000,
+            "Profit (Loss) before Taxation": 2050000,
+            "Taxation": 410000,
+            "Profit (Loss) after Taxation": 1640000,
+            "Extraordinary and other Revenue": 20000,
+            "Extraordinary and other Expenses": 10000,
+            "Extraordinary and other Profit (Loss)": 10000,
+            "Profit (Loss) for Period": 1650000,
+            "Material Costs": 1000000,
+            "Cost of Employees": 800000,
+            "Depreciation": 150000,
+            "EBIT": 2000000,
+            "EBITDA": 2150000,
+            "Added Value": 3500000,
+            "Profit for the year": 1650000,
+            "Cash Flow": 500000,
+            "Net cash used in operating activities": 1000000,
+            "Net cash used in investing activities": -300000,
+            "Cash from financing activities": 800000,
+            "Cash and cash equivalents at beginning of period": 200000,
+            "Foreign currency translation": 15000,
+            "INCREASE (DECREASE) IN CASH AND EQUIVALENTS": 500000,
+            "Cash and cash equivalents at end of period": 700000,
+            "Interest Paid": 20000
+        },
+        "Other Details": {
+            "Last Annual Return Date": "",
+            "Document Filing History": "Not specified",
+            "Foreign Registration Numbers": "Not specified",
+            "Official Language(s)": "Not specified",
+            "Regulator/Governing Authority - Registry Name And address": "Not specified"
+        }
+    },
+    "downloaded_files": ["s3://cbil-bucket/0096e5cc-d110-435c-958e-c9d0103f76ab_20250129_054444_dev/3136014-73875331-20240820-D2A-23102296731.pdf","s3://cbil-bucket/00b08bff-1f54-4a65-9bf9-123d2209c489_20250219_022757_prod/0813387-32978150-20240916-AR24-22902897967.pdf"],
+    "metadata": {
+        "input_parameters": {
+            "company_name": "ANYMASTER LTD",
+            "country": "Cyprus"
+        },
+        "source": "https://efiling.drcor.mcit.gov.cy/DrcorPublic/default.aspx",
+        "payment_details": {
+            "transaction_id": "",
+            "amount_paid": "",
+            "timestamp": ""
+        },
+        "request_status": {
+            "success": true,
+            "failure_reason": "",
+            "request_timestamp": ""
+        }
+    }
+}

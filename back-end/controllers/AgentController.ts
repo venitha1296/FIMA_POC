@@ -1,4 +1,3 @@
-
 // AgentController.ts
 //@ts-ignore
 import { Request, Response } from "express";
@@ -114,11 +113,19 @@ export function validateAgentPayload(payload: any): ValidationResult {
 
 export async function fetchAgentsWithPagination(req: Request, res: Response) {
     const page = parseInt(req.query.page as string, 10) || 1;
-    const limit = parseInt(req.query.limit as string, 10) || 12;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
     const skip = (page - 1) * limit;
 
-    const { country, search } = req.query; // Extract country & search query from request
-    let query: any = {};
+    const { country, search, type } = req.query; // Extract country, search query, and type from request
+    let query: any = {
+        is_failed: 0,      // Always include is_failed = 0
+        is_deleted: false   // Always include is_delete = false
+    };
+
+    // Filter by type if provided
+    if (type) {
+        query.type = type;
+    }
 
     // Filter by country if provided
     if (country) {
@@ -199,18 +206,23 @@ export async function sendAgentRequest(req: Request, res: Response): Promise<Res
         const savedAgent = await newAgent.save(); // MongoDB Save
         requestId = savedAgent._id; // Get the generated request ID
         const AI_WEBADDRESS = process.env.AI_WEBADDRESS as string;
+        let URL = `${AI_WEBADDRESS}/api/thirdparty/mock-ai-status`;
 
         // Step 2: Send saved request ID to third-party API
-        const thirdPartyResponse = await axios.post(AI_WEBADDRESS, {
+        const thirdPartyResponse = await axios.post(URL, {
             requestId,  // Send requestId to third party
             company,
             country,
             keyword
-        });
+        }
+        );
+        console.log("thirdPartyResponse", thirdPartyResponse.data)
 
         // Step 3: If third-party confirms success, return success response
         if (thirdPartyResponse.data.status === "success") {
-            return sendSuccess(res, { requestId }, constantMessage.RequestInitiateSuccess, 201);
+            if (!res.headersSent) {
+                return sendSuccess(res, { requestId }, constantMessage.RequestInitiateSuccess, 201);
+            }
         } else {
             // Step 4: If third-party fails, update `is_failed = 1` and set status = "Failed"
             await AgentRegistry.findByIdAndUpdate(requestId, {
@@ -218,45 +230,110 @@ export async function sendAgentRequest(req: Request, res: Response): Promise<Res
                 is_failed: 1
             });
 
-            return sendError(res, "", "Request failed", 400);
+            if (!res.headersSent) {
+                return sendError(res, "", "Request failed", 400);
+            }
         }
     } catch (error: any) {
-        console.error("Error processing agent:", error);
+        console.error("Error processing agent:", error.message);
         // If an error occurs, mark it as failed
         await AgentRegistry.findByIdAndUpdate(requestId, {
             status: "Failed",
             is_failed: 1
         });
-        return sendError(res, error.message, "Error processing agent");
+        if (!res.headersSent) {
+            return sendError(res, error.message, "Error processing agent");
+        }
     }
 }
 
-/** Second API - Receive OTP and Update DB */
+/**
+ * Validates the OTP request payload
+ */
+function validateOTPPayload(payload: any): ValidationResult {
+    const { requestId, otp } = payload;
+
+    if (!requestId) {
+        return {
+            isValid: false,
+            message: "Request ID is required",
+            status: 400
+        };
+    }
+
+    if (!otp) {
+        return {
+            isValid: false,
+            message: "OTP is required",
+            status: 400
+        };
+    }
+
+    // Validate requestId format (MongoDB ObjectId is 24 characters hexadecimal)
+    if (!/^[0-9a-fA-F]{24}$/.test(requestId)) {
+        return {
+            isValid: false,
+            message: "Invalid Request ID format",
+            status: 400
+        };
+    }
+
+    // Validate OTP format (6 digits)
+    if (!/^\d{6}$/.test(otp)) {
+        return {
+            isValid: false,
+            message: "OTP must be 6 digits",
+            status: 400
+        };
+    }
+
+    return { isValid: true };
+}
+
 export async function receiveOTP(req: Request, res: Response) {
     try {
+        // Validate input
+        const validationResult = validateOTPPayload(req.body);
+        if (!validationResult.isValid) {
+            return sendError(
+                res,
+                new Error(validationResult.message),
+                validationResult.message,
+                validationResult.status ?? 400
+            );
+        }
+
         const { requestId, otp } = req.body;
 
         // Step 1: Find request
         const agent = await AgentRegistry.findById(requestId);
         if (!agent) {
-            return sendError(res,"", "Agent not found", 404);
+            return sendError(res, "", "Agent not found", 404);
         }
 
         // Step 2: Update OTP
         agent.otp = otp;
         await agent.save();
 
-        return sendSuccess(res, { requestId, otp }, constantMessage.OTPSuccess);
-    } catch (error:any) {
+        if (!res.headersSent) {
+            return sendSuccess(res, { requestId, otp }, constantMessage.OTPSuccess);
+        }
+    } catch (error: any) {
         console.error("Error storing OTP:", error);
-        return sendError(res, error.message, "Error storing OTP",500);
+        if (!res.headersSent) {
+            return sendError(res, error.message, "Error storing OTP", 500);
+        }
     }
 }
 
 /** 3. Third API - Receive Final Output and Mark as Completed */
-export async function receiveFinalOutput(req: Request, res: Response) {
+export async function logAIResponse(req: Request, res: Response) {
     try {
         const { requestId, fileOutputData } = req.body;
+
+        if (!requestId) {
+            sendError(res, "", "Agent not found", 404);
+        }
 
         // Step 1: Find request
         const agent = await AgentRegistry.findById(requestId);
@@ -273,15 +350,23 @@ export async function receiveFinalOutput(req: Request, res: Response) {
 
         // Step 3: Update the agent record with file_output ID and mark as completed
         agent.file_output = savedFileOutput._id;
+        console.log(fileOutputData.metadata.source)
+        if (fileOutputData?.metadata?.source) {
+            agent.source_url = fileOutputData.metadata.source;
+        }
         agent.status = "Completed";
         agent.response_time = new Date();
 
         await agent.save();
 
-        return sendSuccess(res, { requestId, fileOutputId: savedFileOutput._id }, "Request processed successfully");
-    } catch (error:any) {
+        if (!res.headersSent) {
+            return sendSuccess(res, { requestId, fileOutputId: savedFileOutput._id }, "Request processed successfully");
+        }
+    } catch (error: any) {
         console.error("Error processing final output:", error);
-        return sendError(res, error.message, "Error processing final output");
+        if (!res.headersSent) {
+            return sendError(res, error.message, "Error processing final output");
+        }
     }
 }
 

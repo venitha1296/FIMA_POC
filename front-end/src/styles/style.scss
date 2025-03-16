@@ -850,7 +850,17 @@ a {
 
 
 
+.disabled-link {
+  pointer-events: none; /* Disables clicking */
+  color: rgba(128, 128, 128, 0.5); /* Light gray with 50% opacity */
+  text-decoration: none; /* Remove underline */
+  cursor: not-allowed;
+  transition: color 0.3s ease-in-out; /* Smooth fading effect */
+}
 
+.disabled-link:hover {
+  color: rgba(128, 128, 128, 0.3); /* Even lighter on hover */
+}
 
 @media (min-width: 576px) {  }
 

@@ -12,8 +12,12 @@ const { jwt, saltRounds, generateRandomPassword, sendEmail } = require('../commo
 async function login(email: string, password: string): Promise<{ authenticated: boolean; token?: string; message?: string }> {
     try {
         // Basic field presence check
-        if (!email || !password) {
+        if (!email && !password) {
             return { authenticated: false, message: 'All fields (email, password) are required.' };
+        } else if (!email) {
+            return { authenticated: false, message: 'Email is required.' };
+        } else if (!password) {
+            return { authenticated: false, message: 'Password is required.' };
         }
 
         // Validate email format using a simple regex
@@ -67,8 +71,14 @@ async function login(email: string, password: string): Promise<{ authenticated: 
 export const signup = async (email: string, username: string, password: string, callback: (err: Error | null, result?: any) => void) => {
     try {
         // Basic field presence check
-        if (!email || !username || !password) {
+        if (!email && !username && !password) {
             return callback(new Error('All fields (email, username, password) are required'));
+        } else if (!email) {
+            return callback(new Error('Email is required'));
+        } else if (!username) {
+            return callback(new Error('Username is required'));
+        } else if (!password) {
+            return callback(new Error('Password is required'));
         }
 
         // Validate email format using a simple regex
@@ -122,7 +132,7 @@ async function sendLink(email: string, callback: any): Promise<{ status?: any, m
     try {
         // Basic field presence check
         if (!email) {
-            return callback(new Error('Email required'));
+            return callback(new Error('Email is required'));
         }
 
         // Validate email format using a simple regex
