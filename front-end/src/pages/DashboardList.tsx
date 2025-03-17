@@ -259,6 +259,7 @@ const DashboardList: React.FC = () => {
 
     const newTabValue = tabTypes[tabId];
     setActiveTab(newTabValue);
+    console.log("selectedCountry", selectedCountry)
 
     // Update tab classes
     document.querySelectorAll('.nav-link').forEach(tab => {

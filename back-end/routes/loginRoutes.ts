@@ -6,30 +6,42 @@ import {
     sendLinkValidation, 
     resetPasswordValidation 
 } from '../middlewares/validationMiddleware';
+import {
+    loginLimiter,
+    passwordResetLimiter,
+    trackLoginAttempts,
+    bruteForceProtection
+} from '../middlewares/securityMiddleware';
 
 const router = Router();
 
 // Login route with rate limiting and brute force protection
-router.post('/login', loginValidation, async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+router.post('/login', 
+    loginLimiter, // Rate limiting
+    bruteForceProtection, // Brute force protection
+    trackLoginAttempts, // Track failed attempts
+    loginValidation, // Input validation
+    async (req: Request, res: Response) => {
+        const { email, password } = req.body;
 
-    try {
-        const results = await login(email, password);
+        try {
+            const results = await login(email, password);
 
-        if (results.authenticated) {
-            // Reset failed attempts on successful login
-            (req as any).loginAttempts?.reset();
-            res.json(results);
-        } else {
-            // Increment failed attempts counter
-            (req as any).loginAttempts?.increment();
-            res.status(401).json(results);
+            if (results.authenticated) {
+                // Reset failed attempts on successful login
+                (req as any).loginAttempts?.reset();
+                res.json(results);
+            } else {
+                // Increment failed attempts counter
+                (req as any).loginAttempts?.increment();
+                res.status(401).json(results);
+            }
+        } catch (error: any) {
+            console.error('Login route error:', error);
+            res.status(500).json({ authenticated: false, message: error.message || 'Internal server error' });
         }
-    } catch (error: any) {
-        console.error('Login route error:', error);
-        res.status(500).json({ authenticated: false, message: error.message || 'Internal server error' });
     }
-});
+);
 
 // Signup route
 router.post('/signup', signupValidation, async (req: Request, res: Response) => {
@@ -44,30 +56,38 @@ router.post('/signup', signupValidation, async (req: Request, res: Response) => 
     });
 });
 
-// Send reset password link route
-router.post('/sendLink', sendLinkValidation, async (req: Request, res: Response) => {
-    const { email } = req.body;
-    
-    sendLink(email, (err: Error | null, results?: any) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-        } else {
-            res.json(results);
-        }
-    });
-});
+// Send reset password link route with rate limiting
+router.post('/sendLink', 
+    passwordResetLimiter,
+    sendLinkValidation, 
+    async (req: Request, res: Response) => {
+        const { email } = req.body;
+        
+        sendLink(email, (err: Error | null, results?: any) => {
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                res.json(results);
+            }
+        });
+    }
+);
 
-// Reset password route
-router.post('/resetPassword', resetPasswordValidation, async (req: Request, res: Response) => {
-    const { password, resetToken } = req.body;
-    
-    resetPassword(password, resetToken, (err: Error | null, results?: any) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-        } else {
-            res.json(results);
-        }
-    });
-});
+// Reset password route with rate limiting
+router.post('/resetPassword', 
+    passwordResetLimiter,
+    resetPasswordValidation, 
+    async (req: Request, res: Response) => {
+        const { password, resetToken } = req.body;
+        
+        resetPassword(password, resetToken, (err: Error | null, results?: any) => {
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                res.json(results);
+            }
+        });
+    }
+);
 
 export default router; 
