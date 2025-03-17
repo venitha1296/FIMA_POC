@@ -5,15 +5,10 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const checkAuthHeader = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const authHeader = req.headers.authorization;
+        const token = req.cookies.authToken;
 
-        if (!authHeader) {
-            return res.status(401).json({ error: 'No authorization header' });
-        }
-
-        const token = authHeader.split(' ')[1];
         if (!token) {
-            return res.status(401).json({ error: 'No token provided' });
+            return res.status(401).json({ error: 'No authorization token found' });
         }
 
         try {

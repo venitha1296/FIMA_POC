@@ -205,6 +205,7 @@ export async function sendAgentRequest(req: Request, res: Response) {
 
         const savedAgent = await newAgent.save(); // MongoDB Save
         requestId = savedAgent._id; // Get the generated request ID
+        console.log("requestId", requestId)
         const AI_WEBADDRESS = process.env.AI_WEBADDRESS as string;
         let URL = `${AI_WEBADDRESS}/api/thirdparty/mock-ai-status`;
 

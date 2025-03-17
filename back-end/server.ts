@@ -2,11 +2,13 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import { logAIResponse } from "./controllers/AgentController";
 import { connectDB } from "./config/database";
 import loginRouter from './routes/loginRoutes';
 import agentRouter from './routes/agentRoutes';
 import aiRouter from './routes/aiRoutes';
+import authRouter from './routes/authRoutes';
 import { checkAuthHeader } from './middlewares/authMiddleware';
 import { apiLimiter, securityHeaders } from './middlewares/securityMiddleware';
 
@@ -40,6 +42,7 @@ app.use(express.json({
     }
 }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser()); // Add cookie-parser middleware
 
 // Security middleware after CORS
 app.use(securityHeaders);
@@ -47,6 +50,7 @@ app.use(apiLimiter); // Global rate limiting
 
 // Use routes
 app.use('/api', loginRouter);
+app.use('/api/auth',checkAuthHeader as express.RequestHandler, authRouter);
 app.use('/api/agents', checkAuthHeader as express.RequestHandler, agentRouter);
 app.use('/api/thirdparty', aiRouter);
 

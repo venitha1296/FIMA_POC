@@ -27,7 +27,7 @@ function App() {
     { path: '/reset', element: <ResetPassword /> },
     { path: '/dashboard', element: <Protected Component={Dashboard} /> },
     { path: '/agents', element: <Protected Component={DashboardList} /> },
-    { path: '/corporate-registry', element: <CorporateRegistry /> },
+    { path: '/corporate-registry', element: <Protected Component={CorporateRegistry} /> },
     { path: '/change-password', element: <Protected Component={ChangePassword} /> },
 
   ])

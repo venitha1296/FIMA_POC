@@ -7,8 +7,7 @@ import {
     fetchAgentsWithPagination, 
     sendAgentRequest, 
     deleteAgent, 
-    receiveOTP, 
-    logAIResponse 
+    receiveOTP
 } from "../controllers/AgentController";
 import {
     agentRequestValidation,
