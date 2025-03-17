@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 const { jwt, saltRounds, generateRandomPassword, sendEmail } = require('../common');
 
-async function login(email: string, password: string): Promise<{ authenticated: boolean; token?: string; message?: string }> {
+export async function login(email: string, password: string): Promise<{ authenticated: boolean; token?: string; message?: string }> {
     try {
         // Basic field presence check
         if (!email && !password) {
@@ -128,7 +128,7 @@ export const signup = async (email: string, username: string, password: string, 
     }
 };
 
-async function sendLink(email: string, callback: any): Promise<{ status?: any, message?: string }> {
+export async function sendLink(email: string, callback: any): Promise<{ status?: any, message?: string }> {
     try {
         // Basic field presence check
         if (!email) {
@@ -184,7 +184,7 @@ async function sendLink(email: string, callback: any): Promise<{ status?: any, m
 }
 
 
-async function resetPassword(password: any, resetToken: any, callback: any) {
+export async function resetPassword(password: any, resetToken: any, callback: any) {
     try {
         // Check if user already exists
         const user = await User.findOne({ resetToken });
@@ -209,4 +209,3 @@ async function resetPassword(password: any, resetToken: any, callback: any) {
     }
 }
 
-module.exports = { signup, login, sendLink, resetPassword }

@@ -41,6 +41,8 @@ const CountryDropdown = ({ countries, onSelectCountry }: CountryDropdownProps) =
         setIsOpen((prev) => !prev);
     };
 
+    console.log("selectedCountry1", selectedCountry)
+
     return (
         <div className="position-relative" ref={dropdownRef}>
             {/* Button to open dropdown */}
@@ -56,15 +58,16 @@ const CountryDropdown = ({ countries, onSelectCountry }: CountryDropdownProps) =
                 <div className="dropdown-menu show p-2" style={{ width: "250px" }}>
                     <Select
                         options={countries}
-                        value={selectedCountry}
+                        value={selectedCountry} // Ensure this is correctly maintained
                         onChange={handleSelect}
                         placeholder="Search Country"
                         isSearchable
                         isClearable
                         autoFocus
-                        menuIsOpen={true} // Force dropdown to open when button is clicked
-                        onMenuClose={() => setIsOpen(false)} // Close dropdown when clicking outside
+                        menuIsOpen={isOpen} // Bind this to state instead of forcing true
+                        onMenuClose={() => setIsOpen(false)} // Ensure this does not reset selection
                     />
+
                 </div>
             )}
         </div>
