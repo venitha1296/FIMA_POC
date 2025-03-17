@@ -16,6 +16,7 @@ const ChangePassword = () => {
     const [email, setEmail] = useState<string>("");
     const [isMinimized, setIsMinimized] = useState(false);
     const navigate = useNavigate(); // Hook for navigation
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -51,9 +52,14 @@ const ChangePassword = () => {
     };
 
     // Logout function
-    const handleLogout = () => {
-        localStorage.removeItem("authToken"); // Remove token
-        navigate("/login"); // Redirect to login page
+    const handleLogout = async () => {
+        try {
+            await ApiFinder.post('/auth/logout');
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout error:", error);
+            navigate('/login');
+        }
     };
 
     const handleBack = () => {
@@ -90,47 +96,21 @@ const ChangePassword = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // If there are errors, do not proceed with the API call
-        if (validateForm()) {
-            try {
-                const response = await ApiFinder.post("/resetPassword", {
-                    password: formData.password,
-                    email, // Send token to backend
-                });
-                if (response.status === 200) {
-                    // On successful signup, you can redirect to login or show a success message
-                    // Show success toast
-                    toast.success('Password Changed successfully!', {
-                        icon: <i className="bi bi-check-circle-fill"></i>,
-                        className: "toast-success",
-                        autoClose: 2000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });
-                    setTimeout(() => {
-                        navigate("/login"); // Redirect after success
-                    }, 2000);
-                }
-            } catch (error: any) {
-                const errorMessage = error.response?.data?.message || "Change password failed! Please try again.";
-                // Handle any API errors here, for example showing a general error message
-                // Show error toast
-                toast.error(errorMessage, {
-                    icon: <i className="bi bi-exclamation-triangle-fill"></i>,
-                    className: "toast-error",
-                    autoClose: 2000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
-            }
+        try {
+            setIsLoading(true);
+            await ApiFinder.post('/auth/change-password', {
+                currentPassword: formData.password,
+                newPassword: formData.password,
+                confirmPassword: formData.confirmPassword
+            });
+            // Handle success
+            navigate('/dashboard');
+        } catch (error) {
+            // Handle error
+            console.error("Password change failed:", error);
+        } finally {
+            setIsLoading(false);
         }
-
-
     };
 
     const toggleSidebar = () => {

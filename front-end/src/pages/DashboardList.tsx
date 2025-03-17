@@ -22,7 +22,7 @@ const DashboardList: React.FC = () => {
 
   const [profileName, setProfileName] = useState<string>("");
   const [isMinimized, setIsMinimized] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false); // Loader state
+  const [isLoading, setIsLoading] = useState(false);
   const [agents, setAgents] = useState<any[]>([]); // Store API response data
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
@@ -56,7 +56,7 @@ const DashboardList: React.FC = () => {
   // Fetch API data
   const fetchCountries = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const token = localStorage.getItem("authToken");
 
       if (!token) {
@@ -104,7 +104,7 @@ const DashboardList: React.FC = () => {
       }
     } finally {
       setTimeout(() => {
-        setLoading(false);
+        setIsLoading(false);
       }, 1000);
     }
   };
@@ -112,7 +112,7 @@ const DashboardList: React.FC = () => {
   // Fetch API data with search
   const fetchData = async (page: number = 1, perPage: number = itemsPerPage, country?: string, search?: string) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const token = localStorage.getItem("authToken");
 
       if (!token) {
@@ -168,7 +168,7 @@ const DashboardList: React.FC = () => {
       }
     } finally {
       setTimeout(() => {
-        setLoading(false);
+        setIsLoading(false);
       }, 1000);
     }
   };
@@ -178,9 +178,14 @@ const DashboardList: React.FC = () => {
   };
 
   // Logout function
-  const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Remove token
-    navigate("/login"); // Redirect to login page
+  const handleLogout = async () => {
+    try {
+      await ApiFinder.post('/auth/logout');
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout error:", error);
+      navigate('/login');
+    }
   };
 
   const handleDownload = (data: any, filename: string) => {
@@ -279,7 +284,7 @@ const DashboardList: React.FC = () => {
     // Call API directly with the constructed URL
     const token = localStorage.getItem("authToken");
     if (token) {
-      setLoading(true);
+      setIsLoading(true);
       ApiFinder.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -321,7 +326,7 @@ const DashboardList: React.FC = () => {
         })
         .finally(() => {
           setTimeout(() => {
-            setLoading(false);
+            setIsLoading(false);
           }, 1000);
         });
     }
@@ -402,7 +407,7 @@ const DashboardList: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {loading ? (
+                {isLoading ? (
                   <Loader /> // Show loader when loading
                 ) : (
                   <>
@@ -578,7 +583,7 @@ const DashboardList: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {loading ? (
+                {isLoading ? (
                   <Loader /> // Show loader when loading
                 ) : (
                   <>
@@ -731,7 +736,7 @@ const DashboardList: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {loading ? (
+                {isLoading ? (
                   <Loader /> // Show loader when loading
                 ) : (
                   <>

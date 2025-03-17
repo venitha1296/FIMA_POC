@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized, toggleSidebar }) => {
                     </Link>
                 </li>
                 <li>
-                    <Link to="" className={location.pathname === "/corporate" ? "active" : ""}>
+                    <Link to="/corporate-registry" className={location.pathname === "/corporate" ? "active" : ""}>
                         <img src="/assets/images/menu-building-4.svg" alt="corporate" />{!isMinimized && "Corporate Registry Agent"}
                     </Link>
                 </li>

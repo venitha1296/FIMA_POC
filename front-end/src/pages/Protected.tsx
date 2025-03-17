@@ -1,22 +1,30 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import ApiFinder from "../apis/ApiFinder";
 
-
-const Protected = (props : any) => {
+const Protected = (props: any) => {
     const navigate = useNavigate()
     const { Component } = props
 
     useEffect(() => {
-        let token = localStorage.getItem('authToken')
-        if (!token) {
-            localStorage.setItem('tokenStatus', "Please login!")
-            navigate('/', {replace: true})
-        }
-    })
+        const checkAuth = async () => {
+            try {
+                const response = await ApiFinder.get('/auth/check');
+                if (!response.data.user) {
+                    navigate('/', { replace: true });
+                }
+            } catch (error) {
+                console.error("Auth check failed:", error);
+                navigate('/', { replace: true });
+            }
+        };
+
+        checkAuth();
+    }, [navigate]);
 
     return (
         <Component />
     )
 }
 
-export default Protected
+export default Protected;

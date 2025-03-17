@@ -6,13 +6,10 @@ import { validate } from '../middlewares/validationMiddleware';
 
 const router = Router();
 
-const mockResponseValidation = [
-    body('query').notEmpty().withMessage('Query is required'),
-    validate
-] as RequestHandler[];
 
-router.post("/mock-ai-status", mockResponseValidation, async (req: Request, res: Response) => {
+router.post("/mock-ai-status", async (req: Request, res: Response) => {
     try {
+        console.log("mock api")
         await getMockResponse(req, res);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });

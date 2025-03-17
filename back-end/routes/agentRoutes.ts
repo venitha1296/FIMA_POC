@@ -7,8 +7,8 @@ import {
     fetchAgentsWithPagination, 
     sendAgentRequest, 
     deleteAgent, 
-    receiveOTP, 
-    logAIResponse 
+    receiveOTP,
+    checkAgentStatus
 } from "../controllers/AgentController";
 import {
     agentRequestValidation,
@@ -74,6 +74,16 @@ router.post("/otp-update", otpValidation, async (req: Request, res: Response) =>
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+// Check agent status
+router.get("/status/:requestId", async (req: Request, res: Response) => {
+    try {
+        await checkAgentStatus(req, res);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 export default router;
 

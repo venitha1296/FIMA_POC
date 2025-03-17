@@ -27,10 +27,22 @@ router.post('/login',
         try {
             const results = await login(email, password);
 
-            if (results.authenticated) {
+            if (results.authenticated && results.token) {
                 // Reset failed attempts on successful login
                 (req as any).loginAttempts?.reset();
-                res.json(results);
+                
+                // Set token in HTTP-only cookie
+                res.cookie('authToken', results.token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    maxAge: 8 * 60 * 60 * 1000, // 8 hours
+                    path: '/'
+                });
+
+                // Remove token from response body for security
+                const { token, ...responseWithoutToken } = results;
+                res.json(responseWithoutToken);
             } else {
                 // Increment failed attempts counter
                 (req as any).loginAttempts?.increment();

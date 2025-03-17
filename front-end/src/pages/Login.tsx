@@ -22,12 +22,8 @@ const Login = () => {
   });
 
   useEffect(() => {
-    let tokenStatus = localStorage.getItem('tokenStatus')
-    if (tokenStatus && tokenStatus !== 'login') {
-      localStorage.removeItem('tokenStatus')
-    }
-
-  },)
+    // Remove localStorage check since we're using cookies now
+  }, []);
 
   // Handle form input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,10 +73,7 @@ const Login = () => {
         const response = await ApiFinder.post("/login", formData); // Your backend API endpoint for login
 
         if (response.status === 200) {
-          // On successful signup, you can redirect to login or show a success message
-          // Show success toast
-          localStorage.setItem("authToken", response.data.token);
-          localStorage.setItem("tokenStatus", 'login');
+          // On successful login, redirect to dashboard
           navigate("/dashboard"); // Redirect after success
         }
       } catch (error: any) {
@@ -102,8 +95,6 @@ const Login = () => {
         setIsLoading(false); // Stop loading
       }
     }
-
-
   };
 
   return (

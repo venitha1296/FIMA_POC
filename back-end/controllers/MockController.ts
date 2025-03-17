@@ -30,6 +30,9 @@ export const getMockResponse = async (req: Request, res: Response) => {
 
 export const getMockApiData = async (req: Request, res: Response) => {
     try {
+        const { requestId } = req.params;
+        console.log("req.params", req.params)
+
         // Define the file path - using absolute path from project root
         const filePath = path.resolve(__dirname, "../exports/final.json");
 
@@ -50,7 +53,6 @@ export const getMockApiData = async (req: Request, res: Response) => {
 
         // Parse the JSON data
         const jsonData = JSON.parse(rawData);
-        const requestId = '67d29a90e2f32e29a2350a98';
 
         // Call the logAIResponse function to store JSON in the database
         await logAIResponse({
