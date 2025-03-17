@@ -13,6 +13,7 @@ import CorporateRegistry from './pages/CorporateRegistry';
 import ChangePassword from './pages/ChangePassword';
 import Finance from './pages/Finance';
 import WebResearch from './pages/WebResearch';
+import OutputView from './pages/OutputView';
 
 
 
@@ -33,6 +34,7 @@ function App() {
     { path: '/change-password', element: <Protected Component={ChangePassword} /> },
     { path: '/finance-data-agent', element: <Finance /> },
     { path: '/web-research-agent', element: <WebResearch /> },
+    { path: '/view', element: <OutputView /> },
 
   ])
 

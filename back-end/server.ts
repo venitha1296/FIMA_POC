@@ -55,7 +55,7 @@ app.use('/api/agents', checkAuthHeader as express.RequestHandler, agentRouter);
 app.use('/api/thirdparty', aiRouter);
 
 // Handle AI response with auth check
-app.post('/api/agents/:id', checkAuthHeader as express.RequestHandler, async (req: Request, res: Response, next: NextFunction) => {
+app.post('/api/agents/:requestId', async (req: Request, res: Response, next: NextFunction) => {
     try {
         await logAIResponse(req, res);
     } catch (error) {

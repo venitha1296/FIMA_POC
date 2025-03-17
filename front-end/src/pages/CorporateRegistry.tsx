@@ -16,7 +16,7 @@ interface CountryOption {
 }
 
 const CorporateRegistry: React.FC = () => {
-  const percentage: number = 50;
+  const [percentage, setPercentage] = useState<number>(0);
   const [profileName, setProfileName] = useState<string>("User");
   const [isMinimized, setIsMinimized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +29,11 @@ const CorporateRegistry: React.FC = () => {
   const [otpInputs, setOtpInputs] = useState<HTMLInputElement[]>([]);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [requestId, setRequestId] = useState<string>("");
+  const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+  const [showOutput, setShowOutput] = useState(false);
+  const [outputData, setOutputData] = useState<any>(null);
+  const statusCheckInterval = useRef<number | null>(null);
+  const progressInterval = useRef<number | null>(null);
 
   const navigate = useNavigate();
 
@@ -54,6 +59,33 @@ const CorporateRegistry: React.FC = () => {
     fetchCountries();
   }, []);
 
+  // Cleanup intervals on component unmount
+  useEffect(() => {
+    return () => {
+      if (statusCheckInterval.current) {
+        clearInterval(statusCheckInterval.current);
+      }
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+    };
+  }, []);
+
+  // Add this useEffect after the existing useEffects
+  useEffect(() => {
+    if (requestId) {
+      console.log("requestId changed, starting status check:", requestId);
+      // Clear any existing interval
+      if (statusCheckInterval.current) {
+        clearInterval(statusCheckInterval.current);
+      }
+      // Start new interval
+      statusCheckInterval.current = setInterval(checkRequestStatus, 60000);
+      // Do initial check immediately
+      checkRequestStatus();
+    }
+  }, [requestId]);
+
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
   };
@@ -68,11 +100,70 @@ const CorporateRegistry: React.FC = () => {
     }
   };
 
+  const checkRequestStatus = async () => {
+    try {
+      if (!requestId) {
+        console.error('No requestId available for status check');
+        return;
+      }
+
+      console.log("Checking status for requestId:", requestId);
+      const response = await ApiFinder.get(`/agents/status/${requestId}`);
+      console.log("Status check response:", response.data);
+      
+      if (response?.data?.success) {
+        const status = response.data.data.status;
+        console.log("Current status:", status);
+        
+        if (status === 'Completed') {
+          // Clear intervals
+          if (statusCheckInterval.current) {
+            clearInterval(statusCheckInterval.current);
+          }
+          if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+          }
+          
+          setShowProgress(false);
+          setShowOutput(true);
+          setOutputData(response.data.data);
+          setIsSearchDisabled(false);
+          setPercentage(100);
+          
+          toast.success('Output generated successfully!', {
+            icon: <i className="bi bi-check-circle-fill"></i>,
+            className: "toast-success",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } 
+      }
+    } catch (error: any) {
+      console.error('Error checking status:', error);
+    
+    }
+  };
+
+  const startProgressAnimation = () => {
+    setPercentage(0);
+    progressInterval.current = setInterval(() => {
+      setPercentage(prev => {
+        if (prev >= 90) return 90; // Cap at 90% until completion
+        return prev + 1;
+      });
+    }, 1000); // Increase by 1% every second
+  };
+
   const handleSearchRegistry = async () => {
     try {
       setIsLoading(true);
       setError(null);
       setShowProgress(false);
+      setShowOutput(false);
+      setOutputData(null);
 
       // Make API call to search registry
       const response = await ApiFinder.post('/agents', {
@@ -84,19 +175,30 @@ const CorporateRegistry: React.FC = () => {
       // Handle successful response
       console.log('Search response:', response.data);
       if (response?.data?.success) {
+        const requestId = response.data.data.requestId;
+        console.log("Setting requestId:", requestId);
+        
+        if (!requestId) {
+          throw new Error('No requestId received from the server');
+        }
+
         setShowProgress(true);
         setShowOtpModal(true);
-        setRequestId(response.data.data.requestId); // Store the requestId from response
+        setRequestId(requestId);
+        setIsSearchDisabled(true);
+        startProgressAnimation();
+        
         toast.success('Agent Request Created Successfully! Please enter OTP sent to your phone.', {
           icon: <i className="bi bi-check-circle-fill"></i>,
           className: "toast-success",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
         });
       } else {
+        setIsSearchDisabled(false);
         toast.error("Request Failed!", {
           icon: <i className="bi bi-exclamation-triangle-fill"></i>,
           className: "toast-error",
@@ -109,10 +211,10 @@ const CorporateRegistry: React.FC = () => {
       }
 
     } catch (err: any) {
+      setIsSearchDisabled(false);
       // Handle validation errors
       if (err.response?.data?.errors) {
         const errorMessage = err.response.data.errors.map((error: any) => error.msg).join(', ');
-        // Show error toast
         toast.error(errorMessage, {
           icon: <i className="bi bi-exclamation-triangle-fill"></i>,
           className: "toast-error",
@@ -124,8 +226,6 @@ const CorporateRegistry: React.FC = () => {
         });
       } else {
         let errorMessage = err.response?.data?.message || 'An error occurred while searching the registry';
-
-        // Show error toast
         toast.error(errorMessage, {
           icon: <i className="bi bi-exclamation-triangle-fill"></i>,
           className: "toast-error",
@@ -136,7 +236,7 @@ const CorporateRegistry: React.FC = () => {
           draggable: true,
         });
       }
-      console.error('Search error:', err.response.data.errors);
+      console.error('Search error:', err.response?.data?.errors);
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +292,7 @@ const CorporateRegistry: React.FC = () => {
 
       if (response?.data?.success) {
         setShowOtpModal(false);
-        toast.success('OTP verified successfully!', {
+        toast.success('OTP updated successfully!', {
           icon: <i className="bi bi-check-circle-fill"></i>,
           className: "toast-success",
           autoClose: 2000,
@@ -289,11 +389,9 @@ const CorporateRegistry: React.FC = () => {
                     <div className="col-md-7">
                       <button
                         type="button"
-                        // data-bs-toggle="modal" 
-                        // data-bs-target="#exampleModal" 
                         className="btn btn-primary fs-14 my-0"
                         onClick={handleSearchRegistry}
-                        disabled={isLoading || !company || !country}
+                        disabled={isLoading || !company || !country || isSearchDisabled}
                       >
                         {isLoading ? (
                           <>
@@ -319,7 +417,7 @@ const CorporateRegistry: React.FC = () => {
           {showProgress && (
             <div className="document-upload-progressbar" style={{ width: 150, height: 150 }}>
               <CircularProgressbar
-                value={Number(percentage)}
+                value={percentage}
                 text={`${percentage}%`}
                 styles={buildStyles({
                   textSize: '24px',
@@ -329,8 +427,11 @@ const CorporateRegistry: React.FC = () => {
               <p>Generating report... Please wait </p>
             </div>
           )}
+ 
 
-          <div className="download-output d-flex align-items-center justify-content-between mb-3 mt-4">
+          {showOutput && outputData && (
+            <>
+              <div className="download-output d-flex align-items-center justify-content-between mb-3 mt-4">
             <div className="">
               <h3>Output</h3>
             </div>
@@ -348,56 +449,35 @@ const CorporateRegistry: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className="main-upload">
-            <div className="grid-view m-0 filter-input-form">
-              <h2>Corporate Date</h2>
-              <h3>Organization Details</h3>
-              <div className="table-responsive circular-progressbar-table">
-                <table className="table mb-4">
-                  <thead>
-                    <tr>
-                      <th>S No</th>
-                      <th>Field</th>
-                      <th>Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>0</td>
-                      <td>Name</td>
-                      <td>SOMARO LIMITED</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Registration Number</td>
-                      <td>HE 84386</td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Type</td>
-                      <td>Limited Company</td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Subtype</td>
-                      <td>Private</td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td>Name Status</td>
-                      <td>Current Name</td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td>Registration Date</td>
-                      <td>25/02/1997</td>
-                    </tr>
-                  </tbody>
-                </table>
+            {/* <div className="main-upload">
+              <div className="grid-view m-0 filter-input-form">
+                <h2>Corporate Data</h2>
+                <h3>Organization Details</h3>
+                <div className="table-responsive circular-progressbar-table">
+                  <table className="table mb-4">
+                    <thead>
+                      <tr>
+                        <th>S No</th>
+                        <th>Field</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(outputData).map(([key, value], index) => (
+                        <tr key={index}>
+                          <td>{index}</td>
+                          <td>{key}</td>
+                          <td>{value as string}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </div>
+            </div> */}
+            </>
+          
+          )}
 
           <div className={`modal fade ${showOtpModal ? 'show' : ''}`} id="exampleModal" style={{ display: showOtpModal ? 'block' : 'none' }}>
             <div className="modal-dialog modal-dialog-centered modal-otp">
@@ -434,19 +514,9 @@ const CorporateRegistry: React.FC = () => {
                         <span className="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
                       </>
                     ) : (
-                      'Verify'
+                      'Save'
                     )}
                   </button>
-                  {/* <div className="d-flex mt-3 gap-2">
-                    <span className="fs-12 text-600 RiverBed">Didn't receive code? </span>
-                    <button 
-                      className="link-text text-600 cobalt fs-12 border-0 bg-transparent"
-                      onClick={() => handleSearchRegistry()}
-                      disabled={isLoading}
-                    >
-                      Resend in 20s
-                    </button>
-                  </div> */}
                 </div>
               </div>
             </div>

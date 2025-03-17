@@ -330,7 +330,9 @@ export async function receiveOTP(req: Request, res: Response) {
 /** 3. Third API - Receive Final Output and Mark as Completed */
 export async function logAIResponse(req: Request, res: Response) {
     try {
-        const { requestId, fileOutputData } = req.body;
+        const {requestId} = req.params;
+        console.log("requestId", requestId)
+        const { fileOutputData } = req.body;
 
         if (!requestId) {
             sendError(res, "", "Agent not found", 404);
@@ -392,3 +394,35 @@ export async function deleteAgent(req: Request, res: Response): Promise<Response
         return sendError(res, err.message, "Error marking agent as deleted");
     }
 }
+
+export const checkAgentStatus = async (req: Request, res: Response) => {
+  try {
+    const { requestId } = req.params;
+
+    // Find the agent request by requestId
+    const agentRequest = await AgentRegistry.findByIdAndUpdate(requestId);
+
+    if (!agentRequest) {
+      return res.status(404).json({
+        success: false,
+        message: 'Agent request not found'
+      });
+    }
+
+    // Return the current status and data
+    return res.status(200).json({
+      success: true,
+      data: {
+        status: agentRequest.status,
+        data: agentRequest
+      }
+    });
+
+  } catch (error) {
+    console.error('Error checking agent status:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while checking agent status'
+    });
+  }
+};
