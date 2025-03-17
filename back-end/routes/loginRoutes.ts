@@ -1,10 +1,16 @@
 import { Router, Request, Response } from 'express';
 import { login, signup, sendLink, resetPassword } from '../controllers/loginController';
+import { 
+    loginValidation, 
+    signupValidation, 
+    sendLinkValidation, 
+    resetPasswordValidation 
+} from '../middlewares/validationMiddleware';
 
 const router = Router();
 
 // Login route with rate limiting and brute force protection
-router.post('/login',  async (req: Request, res: Response) => {
+router.post('/login', loginValidation, async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
@@ -26,7 +32,7 @@ router.post('/login',  async (req: Request, res: Response) => {
 });
 
 // Signup route
-router.post('/signup', async (req: Request, res: Response) => {
+router.post('/signup', signupValidation, async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
     
     signup(email, username, password, (err: Error | null, results?: any) => {
@@ -39,7 +45,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 });
 
 // Send reset password link route
-router.post('/sendLink', async (req: Request, res: Response) => {
+router.post('/sendLink', sendLinkValidation, async (req: Request, res: Response) => {
     const { email } = req.body;
     
     sendLink(email, (err: Error | null, results?: any) => {
@@ -52,7 +58,7 @@ router.post('/sendLink', async (req: Request, res: Response) => {
 });
 
 // Reset password route
-router.post('/resetPassword', async (req: Request, res: Response) => {
+router.post('/resetPassword', resetPasswordValidation, async (req: Request, res: Response) => {
     const { password, resetToken } = req.body;
     
     resetPassword(password, resetToken, (err: Error | null, results?: any) => {

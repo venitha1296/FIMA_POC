@@ -1,10 +1,17 @@
 // agentRoutes.ts
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, RequestHandler } from "express";
 import { getMockApiData, getMockResponse } from "../controllers/MockController";
+import { body } from 'express-validator';
+import { validate } from '../middlewares/validationMiddleware';
 
 const router = Router();
 
-router.post("/mock-ai-status", async (req: Request, res: Response) => {
+const mockResponseValidation = [
+    body('query').notEmpty().withMessage('Query is required'),
+    validate
+] as RequestHandler[];
+
+router.post("/mock-ai-status", mockResponseValidation, async (req: Request, res: Response) => {
     try {
         await getMockResponse(req, res);
     } catch (error) {
