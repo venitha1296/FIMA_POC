@@ -81,18 +81,7 @@ const Login = () => {
           // Show success toast
           localStorage.setItem("authToken", response.data.token);
           localStorage.setItem("tokenStatus", 'login');
-          // toast.success('Login successful! Redirecting', {
-          //   icon: <i className="bi bi-check-circle-fill"></i>,
-          //   className: "toast-success",
-          //   autoClose: 2000,
-          //   hideProgressBar: true,
-          //   closeOnClick: true,
-          //   pauseOnHover: true,
-          //   draggable: true,
-          // });
-          setTimeout(() => {
-            navigate("/dashboard"); // Redirect after success
-          }, 2000);
+          navigate("/dashboard"); // Redirect after success
         }
       } catch (error: any) {
         console.error("Login error:", error);

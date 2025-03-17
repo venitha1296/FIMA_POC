@@ -1,35 +1,55 @@
+import express, { Express, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
 import { logAIResponse } from "./controllers/AgentController";
+import { connectDB } from "./config/database";
+import loginRouter from './routes/loginRoutes';
+import agentRouter from './routes/agentRoutes';
+import aiRouter from './routes/aiRoutes';
+import { checkAuthHeader } from './middlewares/authMiddleware';
 
-// server.ts
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const path = require('path');
-const connectDB = require("./config/database");  // Importing using require
+// Load environment variables
+dotenv.config();
 
-const app = express();
+const app: Express = express();
+const port: number = parseInt(process.env.PORT || '3000', 10);
 
-// Establish database connection
-connectDB();
-
+// Basic middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(bodyParser.json());
 
-const loginRouter = require('./routes/loginRoutes');
-const agentRouter = require('./routes/agentRoutes');
-const AiRouter = require('./routes/aiRoutes');
-const checkAuthHeader = require('./middlewares/authMiddleware');
-
+// Use routes
 app.use('/api', loginRouter);
-app.use('/api/agents', checkAuthHeader, agentRouter);
-app.use('/api/thirdparty', AiRouter);
-app.post('/api/agents/:id', logAIResponse);
+app.use('/api/agents', checkAuthHeader as express.RequestHandler, agentRouter);
+app.use('/api/thirdparty', aiRouter);
 
-// Serve static files from the "exports" directory
+// Handle AI response with auth check
+app.post('/api/agents/:id', checkAuthHeader as express.RequestHandler, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await logAIResponse(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Serve static files
 app.use('/exports', express.static(path.join(__dirname, '../exports')));
 
-const port = process.env.PORT || 3001;  // Ensure a fallback for port if not set
-app.listen(port, () => {
-  console.log('Server started on port ' + port);
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something broke!' });
+});
+
+// Connect to MongoDB
+connectDB().then(() => {
+    // Start server
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    });
+}).catch((err: Error) => {
+    console.error('Failed to connect to MongoDB:', err);
+    process.exit(1);
 });

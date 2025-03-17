@@ -175,7 +175,7 @@ export async function fetchAgentsWithPagination(req: Request, res: Response) {
  * Create a new agent request.
  * The agent is created with status "Processing".
  */
-export async function sendAgentRequest(req: Request, res: Response): Promise<Response> {
+export async function sendAgentRequest(req: Request, res: Response) {
     // Validate the payload using the separate function
     const validationResult = validateAgentPayload(req.body);
     if (!validationResult.isValid) {
