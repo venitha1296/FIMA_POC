@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ handleLogout }) => {
             <img
               className="profile-image img-fluid cursor"
               data-bs-toggle="dropdown"
-              src="/assets/images/profile-pic.jpg"
+              src="/assets/images/profile-pic.svg"
               alt=""
             />
             <ul className="dropdown-menu py-1 border-0 shadow-sm">
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ handleLogout }) => {
                 </Link>
               </li>
               <li>
-                <button className="dropdown-item text-danger fs-14 cursor border-0 bg-transparent" onClick={handleLogout}>
+                <button className="dropdown-item text-danger fs-14 cursor" onClick={handleLogout}>
                   Logout
                 </button>
               </li>
