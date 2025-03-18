@@ -30,7 +30,7 @@ const WebResearch: React.FC = () => {
         <div className="d-flex">
             <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-                <Header profileName={profileName} handleLogout={handleLogout} />
+                <Header handleLogout={handleLogout} />
                 <section>
                <div className="main-upload">
 

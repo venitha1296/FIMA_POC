@@ -5,7 +5,7 @@ import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
 import ApiFinder from "../apis/ApiFinder";
 
-const Finance: React.FC = () => {
+const ViewPage: React.FC = () => {
     const [profileName, setProfileName] = useState<string>("");
     const [isMinimized, setIsMinimized] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ const Finance: React.FC = () => {
         <div className="d-flex">
             <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-                <Header profileName={profileName} handleLogout={handleLogout} />
+                <Header handleLogout={handleLogout} />
                 <section>
                   <div className="main-upload">
                     <div className="breadcrumb">
@@ -224,4 +224,4 @@ const Finance: React.FC = () => {
     );
 };
 
-export default Finance;
+export default ViewPage;

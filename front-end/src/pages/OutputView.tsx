@@ -30,7 +30,7 @@ const OutputView: React.FC = () => {
         <div className="d-flex">
             <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-                <Header profileName={profileName} handleLogout={handleLogout} />
+                <Header handleLogout={handleLogout} />
                
             </div>
         </div>

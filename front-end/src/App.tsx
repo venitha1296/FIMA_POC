@@ -11,9 +11,9 @@ import Protected from './pages/Protected';
 import DashboardList from './pages/DashboardList';
 import CorporateRegistry from './pages/CorporateRegistry';
 import ChangePassword from './pages/ChangePassword';
-import Finance from './pages/Finance';
 import WebResearch from './pages/WebResearch';
 import OutputView from './pages/OutputView';
+import ViewPage from './pages/ViewPage';
 
 
 
@@ -32,7 +32,7 @@ function App() {
     { path: '/agents', element: <Protected Component={DashboardList} /> },
     { path: '/corporate-registry', element: <Protected Component={CorporateRegistry} /> },
     { path: '/change-password', element: <Protected Component={ChangePassword} /> },
-    { path: '/finance-data-agent', element: <Finance /> },
+    { path: '/view', element: <ViewPage /> },
     { path: '/web-research-agent', element: <WebResearch /> },
     { path: '/view', element: <OutputView /> },
 
