@@ -20,7 +20,6 @@ interface CountryOption {
 
 const DashboardList: React.FC = () => {
 
-  const [profileName, setProfileName] = useState<string>("");
   const [isMinimized, setIsMinimized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [agents, setAgents] = useState<any[]>([]); // Store API response data
@@ -35,18 +34,6 @@ const DashboardList: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Corporate Registry Agent");
 
   const navigate = useNavigate(); // Hook for navigation
-
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        setProfileName(decodedToken.username || "User");
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     fetchCountries();
@@ -72,7 +59,7 @@ const DashboardList: React.FC = () => {
       const countries = response.data.map(({ name, code }: { name: string; code: string }) => ({
         value: name,
         label: name,
-        code: name
+        code: code
       }));
       setCountries(countries);
       console.log(countries);
@@ -167,9 +154,10 @@ const DashboardList: React.FC = () => {
         });
       }
     } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
+      setIsLoading(false);
+      // setTimeout(() => {
+      //   setIsLoading(false);
+      // }, 1000);
     }
   };
 
@@ -336,7 +324,7 @@ const DashboardList: React.FC = () => {
     <div className="d-flex">
       <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
       <div className="main-section">
-        <Header profileName={profileName} handleLogout={handleLogout} />
+        <Header handleLogout={handleLogout} />
 
         <section>
 

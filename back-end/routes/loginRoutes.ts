@@ -33,9 +33,9 @@ router.post('/login',
                 
                 // Set token in HTTP-only cookie
                 res.cookie('authToken', results.token, {
-                    httpOnly: true,
+                    httpOnly: false, // Allow JavaScript access
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'strict',
+                    sameSite: 'lax', // Allow cross-site requests
                     maxAge: 8 * 60 * 60 * 1000, // 8 hours
                     path: '/'
                 });

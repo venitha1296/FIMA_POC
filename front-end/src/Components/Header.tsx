@@ -1,12 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
+
 
 interface HeaderProps {
-  profileName: string;
   handleLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ profileName, handleLogout }) => {
+const Header: React.FC<HeaderProps> = ({ handleLogout }) => {
+  const [profileName, setProfileName] = useState<string>("");
+
+  useEffect(() => {
+    console.log('All cookies:', document.cookie);
+    console.log('Cookies.get result:', Cookies.get());
+    const token = Cookies.get('authToken');
+    console.log('Auth token:', token);
+    if (token) {
+        try {
+            // Decode the JWT token (it's base64 encoded)
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            console.log('Token payload:', payload);
+            setProfileName(payload.username || "User");
+        } catch (error) {
+            console.error("Error decoding token:", error);
+            setProfileName("User");
+        }
+    } else {
+        console.log('No authToken found in cookies');
+    }
+}, []);
+
   return (
     <header>
       <div className="d-flex justify-content-end">
