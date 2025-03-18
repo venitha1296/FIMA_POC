@@ -695,24 +695,34 @@ const CorporateRegistry: React.FC = () => {
                       </button>
                     </div>
                     {isDownloading && (
-                      <div className="download-progress" style={{ position: 'absolute', top: '100%', left: 0, right: 0, backgroundColor: 'white', padding: '15px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '4px', marginTop: '10px', width: '300px', zIndex: 1000 }}>
-                        <div className="mb-2">Download Initiated</div>
-                        <div className="progress" style={{ height: '6px', backgroundColor: '#e9ecef' }}>
-                          <div 
-                            className="progress-bar"
-                            role="progressbar" 
-                            style={{ 
-                              width: `${downloadProgress}%`,
-                              backgroundColor: '#28a745',
-                              transition: 'width 0.3s ease-in-out'
-                            }}
-                            aria-valuenow={downloadProgress} 
-                            aria-valuemin={0} 
-                            aria-valuemax={100}
-                          ></div>
+                        <div className="download-progress" style={{ 
+                          position: 'fixed', 
+                          top: '20px', 
+                          right: '20px', 
+                          backgroundColor: 'white', 
+                          padding: '15px', 
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+                          borderRadius: '4px', 
+                          width: '300px', 
+                          zIndex: 1050 
+                        }}>
+                          <div className="mb-2">Download Initiated</div>
+                          <div className="progress" style={{ height: '6px', backgroundColor: '#e9ecef' }}>
+                            <div
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{
+                                width: `${downloadProgress}%`,
+                                backgroundColor: '#28a745',
+                                transition: 'width 0.3s ease-in-out'
+                              }}
+                              aria-valuenow={downloadProgress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </div>
               </div>

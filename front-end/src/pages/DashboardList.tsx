@@ -32,6 +32,9 @@ const DashboardList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [activeTab, setActiveTab] = useState<string>("Corporate Registry Agent");
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+
 
   const navigate = useNavigate(); // Hook for navigation
 
@@ -39,6 +42,11 @@ const DashboardList: React.FC = () => {
     fetchCountries();
     fetchData();
   }, []);
+
+  // Add this useEffect to monitor state changes
+  useEffect(() => {
+    console.log("isDownload updated to:", isDownloading);
+  }, [isDownloading]);
 
   // Fetch API data
   const fetchCountries = async () => {
@@ -176,18 +184,26 @@ const DashboardList: React.FC = () => {
     }
   };
 
-  const handleDownload = (data: any, filename: string) => {
-    const fileData = JSON.stringify(data, null, 2);
-    const blob = new Blob([fileData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+  const handleDownload = async (data: any, fileName: string, type: 'excel' | 'json' | 'docx') => {
+    setIsDownloading(true);
+    setDownloadProgress(0);
+    if (data) {
+      // Show initial progress
+      setDownloadProgress(30);
 
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      if (type === 'excel') {
+        await exportExcel(data, fileName);
+      } else {
+        await exportJSON(data, fileName);
+      }
+
+      // Show completion
+      setDownloadProgress(100);
+      setTimeout(() => {
+        setIsDownloading(false);
+        setDownloadProgress(0);
+      }, 1000);
+    }
   };
 
   // Handle search input change with debounce
@@ -379,6 +395,7 @@ const DashboardList: React.FC = () => {
 
             <div className="tab-content" id="tab-content">
               <div className="tab-pane active" id="cr-agent-panel" role="tabpanel" aria-labelledby="cr-agent">
+
                 <div className="filter-view">
                   <h3>Overview</h3>
                   <div className="d-flex align-items-center gap-3">
@@ -399,100 +416,131 @@ const DashboardList: React.FC = () => {
                   <Loader /> // Show loader when loading
                 ) : (
                   <>
-                    <div className="table-responsive">
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>S No</th>
-                            <th>Company Name</th>
-                            <th>Country</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Source URL</th>
-                            <th>File output</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {agents.length > 0 ? (
-                            agents.map((agent, index) => (
-                              <tr key={agent.id}>
-                                <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
-                                <td>{highlightText(agent.company, searchQuery)}</td>
-                                <td>{highlightText(agent.country, searchQuery)}</td>
-                                <td>
-                                  <span className={`badge badge-${agent.status.toLowerCase()}`}>
-                                    {agent.status}
-                                  </span>
-                                </td>
-                                <td>{agent.request_time}</td>
-                                <td>
-                                  <a
-                                    href={agent.source_url || "#"}
-                                    className={`text-line ${!agent.source_url ? "disabled-link" : ""}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => !agent.source_url && e.preventDefault()} // Prevents click if URL is missing
-                                  >
-                                    View Source
-                                  </a>
-                                </td>
-                                <td>
-                                  <div className="d-flex gap-2">
-                                    <button
-                                      className={`btn btn-sm btn-download ${agent.file_output && Object.keys(agent.file_output).length > 0
-                                          ? "btn-download-green"
-                                          : "opacity-50 cursor-not-allowed"
-                                        }`}
-                                      type="button"
-                                      disabled={!agent.file_output || Object.keys(agent.file_output).length === 0} // Disable if file_output is empty
-                                      onClick={() => {
-                                        if (agent.file_output?.data) {
-                                          const timestamp = new Date().toISOString().replace(/[:.-]/g, "_"); // Formats time safely
-                                          const fileName = `${agent.type}_${agent.company}_${timestamp}`;
-                                          
-                                          exportExcel(agent.file_output.data, fileName);
-                                        }
-                                      }}
-                                    > 
-                                      <img src="/assets/images/file-download-green.svg" alt="" />XLS
-                                    </button>
-                                    <button
-                                      className={`btn btn-sm btn-download ${agent.file_output && Object.keys(agent.file_output).length > 0
-                                          ? "btn-download-green"
-                                          : "opacity-50 cursor-not-allowed"
-                                        }`}
-                                      type="button"
-                                      disabled={!agent.file_output || Object.keys(agent.file_output).length === 0} // Disable if file_output is empty
-                                      onClick={() => {
-                                        if (agent.file_output?.data) {
-                                          const timestamp = new Date().toISOString().replace(/[:.-]/g, "_"); // Formats time safely
-                                          const fileName = `${agent.type}_${agent.company}_${timestamp}`;
-                                          
-                                          exportJSON(agent.file_output.data, fileName);
-                                        }
-                                      }}
+                    <div style={{ position: 'relative' }}>
+                      <div className="table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>S No</th>
+                              <th>Company Name</th>
+                              <th>Country</th>
+                              <th>Status</th>
+                              <th>Date</th>
+                              <th>Source URL</th>
+                              <th>File output</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {agents.length > 0 ? (
+                              agents.map((agent, index) => (
+                                <tr key={agent.id}>
+                                  <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
+                                  <td>{highlightText(agent.company, searchQuery)}</td>
+                                  <td>{highlightText(agent.country, searchQuery)}</td>
+                                  <td>
+                                    <span className={`badge badge-${agent.status.toLowerCase()}`}>
+                                      {agent.status}
+                                    </span>
+                                  </td>
+                                  <td>{agent.request_time}</td>
+                                  <td>
+                                    <a
+                                      href={agent.source_url || "#"}
+                                      className={`text-line ${!agent.source_url ? "disabled-link" : ""}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => !agent.source_url && e.preventDefault()} // Prevents click if URL is missing
                                     >
-                                      <img src="/assets/images/file-download-blue.svg" alt="" />JSON
+                                      View Source
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <div className="d-flex gap-2">
+                                      <button
+                                        className={`btn btn-sm btn-download ${agent.file_output && Object.keys(agent.file_output).length > 0
+                                          ? "btn-download-green"
+                                          : "opacity-50 cursor-not-allowed"
+                                          }`}
+                                        type="button"
+                                        disabled={!agent.file_output || Object.keys(agent.file_output).length === 0} // Disable if file_output is empty
+                                        onClick={() => {
+                                          if (agent.file_output?.data) {
+                                            const timestamp = new Date().toISOString().replace(/[:.-]/g, "_"); // Formats time safely
+                                            const fileName = `${agent.type}_${agent.company}_${timestamp}`;
+
+                                            handleDownload(agent.file_output.data, fileName, 'excel');
+                                          }
+                                        }}
+                                      >
+                                        <img src="/assets/images/file-download-green.svg" alt="" />XLS
+                                      </button>
+                                      <button
+                                        className={`btn btn-sm btn-download ${agent.file_output && Object.keys(agent.file_output).length > 0
+                                          ? "btn-download-green"
+                                          : "opacity-50 cursor-not-allowed"
+                                          }`}
+                                        type="button"
+                                        disabled={!agent.file_output || Object.keys(agent.file_output).length === 0} // Disable if file_output is empty
+                                        onClick={() => {
+                                          if (agent.file_output?.data) {
+                                            const timestamp = new Date().toISOString().replace(/[:.-]/g, "_"); // Formats time safely
+                                            const fileName = `${agent.type}_${agent.company}_${timestamp}`;
+
+                                            handleDownload(agent.file_output.data, fileName, 'json');
+                                          }
+                                        }}
+                                      >
+                                        <img src="/assets/images/file-download-blue.svg" alt="" />JSON
+                                      </button>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-view" type="button">
+                                      <i className="bi bi-eye"></i>
                                     </button>
-                                  </div>
-                                </td>
-                                <td>
-                                  <button className="btn btn-view" type="button">
-                                    <i className="bi bi-eye"></i>
-                                  </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={8} className="text-center">
+                                  No data available
                                 </td>
                               </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={8} className="text-center">
-                                No data available
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                      {isDownloading && (
+                        <div className="download-progress" style={{ 
+                          position: 'fixed', 
+                          top: '20px', 
+                          right: '20px', 
+                          backgroundColor: 'white', 
+                          padding: '15px', 
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+                          borderRadius: '4px', 
+                          width: '300px', 
+                          zIndex: 1050 
+                        }}>
+                          <div className="mb-2">Download Initiated</div>
+                          <div className="progress" style={{ height: '6px', backgroundColor: '#e9ecef' }}>
+                            <div
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{
+                                width: `${downloadProgress}%`,
+                                backgroundColor: '#28a745',
+                                transition: 'width 0.3s ease-in-out'
+                              }}
+                              aria-valuenow={downloadProgress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="d-flex justify-content-between bg-white px-3 mb-4">
                       <div className="pagination-count d-flex align-items-center">
@@ -575,77 +623,79 @@ const DashboardList: React.FC = () => {
                   <Loader /> // Show loader when loading
                 ) : (
                   <>
-                    <div className="table-responsive">
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>S No</th>
-                            <th>Company Name</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Source Docs</th>
-                            <th>File output</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {agents.length > 0 ? (
-                            agents.map((agent, index) => (
-                              <tr key={agent.id}>
-                                <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
-                                <td>{highlightText(agent.company, searchQuery)}</td>
-                                <td>
-                                  <span className={`badge badge-${agent.status.toLowerCase()}`}>
-                                    {agent.status}
-                                  </span>
-                                </td>
-                                <td>{agent.request_time}</td>
-                                <td>
-                                  <button
-                                    className="btn btn-sm btn-download btn-download-green"
-                                    type="button"
-                                    disabled={!agent.output} // Disable if output is null
-                                    onClick={() => agent.output && handleDownload(agent.output, 'docx')} // Call download function if output exists
-                                  >
-                                    <img src="/assets/images/file-download-green.svg" alt="" />Doc
-                                  </button>
-                                </td>
-                                <td>
-                                  <div className="d-flex gap-2">
+                    <div style={{ position: 'relative' }}>
+                      <div className="table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>S No</th>
+                              <th>Company Name</th>
+                              <th>Status</th>
+                              <th>Date</th>
+                              <th>Source Docs</th>
+                              <th>File output</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {agents.length > 0 ? (
+                              agents.map((agent, index) => (
+                                <tr key={agent.id}>
+                                  <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
+                                  <td>{highlightText(agent.company, searchQuery)}</td>
+                                  <td>
+                                    <span className={`badge badge-${agent.status.toLowerCase()}`}>
+                                      {agent.status}
+                                    </span>
+                                  </td>
+                                  <td>{agent.request_time}</td>
+                                  <td>
                                     <button
                                       className="btn btn-sm btn-download btn-download-green"
                                       type="button"
                                       disabled={!agent.output} // Disable if output is null
-                                      onClick={() => agent.output && handleDownload(agent.output, 'xls')} // Call download function if output exists
+                                      onClick={() => agent.output && handleDownload(agent.output, 'name', 'docx')} // Call download function if output exists
                                     >
-                                      <img src="/assets/images/file-download-green.svg" alt="" />XLS
+                                      <img src="/assets/images/file-download-green.svg" alt="" />Doc
                                     </button>
-                                    <button
-                                      className="btn btn-sm btn-download btn-download-green"
-                                      type="button"
-                                      disabled={!agent.output} // Disable if output is null
-                                      onClick={() => agent.output && handleDownload(agent.output, 'json')} // Call download function if output exists
-                                    >
-                                      <img src="/assets/images/file-download-blue.svg" alt="" />JSON
+                                  </td>
+                                  <td>
+                                    <div className="d-flex gap-2">
+                                      <button
+                                        className="btn btn-sm btn-download btn-download-green"
+                                        type="button"
+                                        disabled={!agent.output} // Disable if output is null
+                                        onClick={() => agent.output && handleDownload(agent.output, 'name', 'excel')} // Call download function if output exists
+                                      >
+                                        <img src="/assets/images/file-download-green.svg" alt="" />XLS
+                                      </button>
+                                      <button
+                                        className="btn btn-sm btn-download btn-download-green"
+                                        type="button"
+                                        disabled={!agent.output} // Disable if output is null
+                                        onClick={() => agent.output && handleDownload(agent.output, 'name', 'json')} // Call download function if output exists
+                                      >
+                                        <img src="/assets/images/file-download-blue.svg" alt="" />JSON
+                                      </button>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-view" type="button">
+                                      <i className="bi bi-eye"></i>
                                     </button>
-                                  </div>
-                                </td>
-                                <td>
-                                  <button className="btn btn-view" type="button">
-                                    <i className="bi bi-eye"></i>
-                                  </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={8} className="text-center">
+                                  No data available
                                 </td>
                               </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={8} className="text-center">
-                                No data available
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-between bg-white px-3 mb-4">
                       <div className="pagination-count d-flex align-items-center">
@@ -728,68 +778,70 @@ const DashboardList: React.FC = () => {
                   <Loader /> // Show loader when loading
                 ) : (
                   <>
-                    <div className="table-responsive">
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>S No</th>
-                            <th>Company Name</th>
-                            <th>Country</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>File output</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {agents.length > 0 ? (
-                            agents.map((agent, index) => (
-                              <tr key={agent.id}>
-                                <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
-                                <td>{highlightText(agent.company, searchQuery)}</td>
-                                <td>{highlightText(agent.country, searchQuery)}</td>
-                                <td>
-                                  <span className={`badge badge-${agent.status.toLowerCase()}`}>
-                                    {agent.status}
-                                  </span>
-                                </td>
-                                <td>{agent.request_time}</td>
-                                <td>
-                                  <div className="d-flex gap-2">
-                                    <button
-                                      className="btn btn-sm btn-download btn-download-green"
-                                      type="button"
-                                      disabled={!agent.output} // Disable if output is null
-                                      onClick={() => agent.output && handleDownload(agent.output, 'xls')} // Call download function if output exists
-                                    >
-                                      <img src="/assets/images/file-download-green.svg" alt="" />XLS
+                    <div style={{ position: 'relative' }}>
+                      <div className="table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>S No</th>
+                              <th>Company Name</th>
+                              <th>Country</th>
+                              <th>Status</th>
+                              <th>Date</th>
+                              <th>File output</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {agents.length > 0 ? (
+                              agents.map((agent, index) => (
+                                <tr key={agent.id}>
+                                  <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
+                                  <td>{highlightText(agent.company, searchQuery)}</td>
+                                  <td>{highlightText(agent.country, searchQuery)}</td>
+                                  <td>
+                                    <span className={`badge badge-${agent.status.toLowerCase()}`}>
+                                      {agent.status}
+                                    </span>
+                                  </td>
+                                  <td>{agent.request_time}</td>
+                                  <td>
+                                    <div className="d-flex gap-2">
+                                      <button
+                                        className="btn btn-sm btn-download btn-download-green"
+                                        type="button"
+                                        disabled={!agent.output} // Disable if output is null
+                                        onClick={() => agent.output && handleDownload(agent.output, 'name', 'excel')} // Call download function if output exists
+                                      >
+                                        <img src="/assets/images/file-download-green.svg" alt="" />XLS
+                                      </button>
+                                      <button
+                                        className="btn btn-sm btn-download btn-download-green"
+                                        type="button"
+                                        disabled={!agent.output} // Disable if output is null
+                                        onClick={() => agent.output && handleDownload(agent.output, 'name', 'json')} // Call download function if output exists
+                                      >
+                                        <img src="/assets/images/file-download-blue.svg" alt="" />JSON
+                                      </button>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-view" type="button">
+                                      <i className="bi bi-eye"></i>
                                     </button>
-                                    <button
-                                      className="btn btn-sm btn-download btn-download-green"
-                                      type="button"
-                                      disabled={!agent.output} // Disable if output is null
-                                      onClick={() => agent.output && handleDownload(agent.output, 'json')} // Call download function if output exists
-                                    >
-                                      <img src="/assets/images/file-download-blue.svg" alt="" />JSON
-                                    </button>
-                                  </div>
-                                </td>
-                                <td>
-                                  <button className="btn btn-view" type="button">
-                                    <i className="bi bi-eye"></i>
-                                  </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={8} className="text-center">
+                                  No data available
                                 </td>
                               </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={8} className="text-center">
-                                No data available
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-between bg-white px-3 mb-4">
                       <div className="pagination-count d-flex align-items-center">

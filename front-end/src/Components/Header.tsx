@@ -11,10 +11,7 @@ const Header: React.FC<HeaderProps> = ({ handleLogout }) => {
   const [profileName, setProfileName] = useState<string>("");
 
   useEffect(() => {
-    console.log('All cookies:', document.cookie);
-    console.log('Cookies.get result:', Cookies.get());
     const token = Cookies.get('authToken');
-    console.log('Auth token:', token);
     if (token) {
         try {
             // Decode the JWT token (it's base64 encoded)

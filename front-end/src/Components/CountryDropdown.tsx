@@ -41,8 +41,6 @@ const CountryDropdown = ({ countries, onSelectCountry }: CountryDropdownProps) =
         setIsOpen((prev) => !prev);
     };
 
-    console.log("selectedCountry1", selectedCountry)
-
     return (
         <div className="position-relative" ref={dropdownRef}>
             {/* Button to open dropdown */}
