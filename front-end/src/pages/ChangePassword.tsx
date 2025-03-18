@@ -12,24 +12,10 @@ import Header from "../Components/Header";
 const ChangePassword = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [profileName, setProfileName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [isMinimized, setIsMinimized] = useState(false);
     const navigate = useNavigate(); // Hook for navigation
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        if (token) {
-            try {
-                const decodedToken: any = jwtDecode(token);
-                setProfileName(decodedToken.username || "User");
-                setEmail(decodedToken.email);
-            } catch (error) {
-                console.error("Invalid token", error);
-            }
-        }
-    }, []);
 
     const [formData, setFormData] = useState({
         password: "",
@@ -121,7 +107,7 @@ const ChangePassword = () => {
         <div className="d-flex">
              <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-            <Header profileName={profileName} handleLogout={handleLogout} />
+            <Header handleLogout={handleLogout} />
                 <section>
                 <div className="login-form w-100 px-5">
                 <div className="login-form__block py-4 px-4 mw-100 shadow-none">

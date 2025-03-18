@@ -50,18 +50,22 @@ app.use(apiLimiter); // Global rate limiting
 
 // Use routes
 app.use('/api', loginRouter);
-app.use('/api/auth',checkAuthHeader as express.RequestHandler, authRouter);
-app.use('/api/agents', checkAuthHeader as express.RequestHandler, agentRouter);
-app.use('/api/thirdparty', aiRouter);
+app.use('/api/auth', checkAuthHeader as express.RequestHandler, authRouter);
 
-// Handle AI response with auth check
+// Handle AI response without auth check - specific route first
 app.post('/api/agents/:requestId', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log("final")
         await logAIResponse(req, res);
     } catch (error) {
         next(error);
     }
 });
+
+// Then general agent routes with auth check
+app.use('/api/agents', checkAuthHeader as express.RequestHandler, agentRouter);
+
+app.use('/api/thirdparty', aiRouter);
 
 // Serve static files
 app.use('/exports', express.static(path.join(__dirname, '../exports')));

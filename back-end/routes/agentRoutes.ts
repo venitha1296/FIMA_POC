@@ -8,7 +8,8 @@ import {
     sendAgentRequest, 
     deleteAgent, 
     receiveOTP,
-    checkAgentStatus
+    checkAgentStatus,
+    getAgentOutputById
 } from "../controllers/AgentController";
 import {
     agentRequestValidation,
@@ -67,7 +68,7 @@ router.delete("/:id", deleteAgentValidation, async (req: Request, res: Response)
     }
 });
 
-router.post("/otp-update", otpValidation, async (req: Request, res: Response) => {
+router.post("/otp/update", otpValidation, async (req: Request, res: Response) => {
     try {
         await receiveOTP(req, res);
     } catch (error) {
@@ -79,6 +80,14 @@ router.post("/otp-update", otpValidation, async (req: Request, res: Response) =>
 router.get("/status/:requestId", async (req: Request, res: Response) => {
     try {
         await checkAgentStatus(req, res);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get("/:requestId/output", async (req: Request, res: Response) => {
+    try {
+        await getAgentOutputById(req, res);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }

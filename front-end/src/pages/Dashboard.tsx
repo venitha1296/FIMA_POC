@@ -6,28 +6,10 @@ import Header from "../Components/Header";
 import ApiFinder from "../apis/ApiFinder";
 
 const Dashboard: React.FC = () => {
-    const [profileName, setProfileName] = useState<string>("");
     const [isMinimized, setIsMinimized] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const navigate = useNavigate(); // Hook for navigation
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true);
-                const response = await ApiFinder.get('/dashboard');
-                // Handle response data
-            } catch (error) {
-                console.error("Failed to fetch dashboard data:", error);
-                navigate('/login');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [navigate]);
+    const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setIsMinimized(!isMinimized);
@@ -47,7 +29,7 @@ const Dashboard: React.FC = () => {
         <div className="d-flex">
             <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
             <div className="main-section">
-                <Header profileName={profileName} handleLogout={handleLogout} />
+                <Header handleLogout={handleLogout} />
                 <section>
                     <div className="home-welcome-links">
                         <h2 className="jacarta">Accelerate financial decisions with</h2>

@@ -414,7 +414,6 @@ export const checkAgentStatus = async (req: Request, res: Response) => {
       success: true,
       data: {
         status: agentRequest.status,
-        data: agentRequest
       }
     });
 
@@ -426,3 +425,35 @@ export const checkAgentStatus = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getAgentOutputById = async (req: Request, res: Response) => {
+    try {
+      const { requestId } = req.params;
+  
+      // Find the agent request by requestId
+      const agentRequest = await AgentRegistry.findByIdAndUpdate(requestId).populate("file_output");
+  
+      if (!agentRequest) {
+        return res.status(404).json({
+          success: false,
+          message: 'Agent request not found'
+        });
+      }
+  
+      // Return the current status and data
+      return res.status(200).json({
+        success: true,
+        data: {
+          status: agentRequest.status,
+          agentOutput: agentRequest
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error checking agent status:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error while checking agent status'
+      });
+    }
+  };

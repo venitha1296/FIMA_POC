@@ -958,6 +958,27 @@ a {
   color: rgba(128, 128, 128, 0.3); /* Even lighter on hover */
 }
 
+.section-title {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 0;
+  border-bottom: 2px solid #e9ecef;
+}
+.table {
+  margin-bottom: 0;
+}
+.table th, .table td {
+  padding: 12px;
+  vertical-align: middle;
+}
+.output-data-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
 @media (min-width: 576px) {  }
 
 
