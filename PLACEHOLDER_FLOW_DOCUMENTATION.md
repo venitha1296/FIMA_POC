@@ -129,7 +129,7 @@ sequenceDiagram
     
     Note over User, DB: Phase 1: Document Upload & Validation
     
-    User->>Controller: POST /document/v1/create<br/>{flowType: "placeholder", document, approvers}
+    User->>Controller: POST /document/v1/documentplaceholder/details/create<br/>{flowType: "placeholder", documentBase64, approvers}
     Controller->>Controller: Authenticate User
     Controller->>Controller: Validate Input Data
     Controller->>Service: getPlaceholderCoordinates(params)
@@ -208,7 +208,7 @@ sequenceDiagram
 ```mermaid
 graph TD
     subgraph API["🌐 API Layer"]
-        A1[POST /document/v1/create]
+        A1[POST /document/v1/documentplaceholder/details/create]
         A2[Authentication Middleware]
         A3[Input Validation]
         A4[Document Controller]
@@ -2018,5 +2018,6 @@ The Placeholder Flow system represents a significant advancement in document wor
 **Feedback Contact**: [System Architecture Team](mailto:architecture@company.com)  
 
 ---
+
 
 *This documentation is maintained as a living document and will be updated with system enhancements and user feedback.*
