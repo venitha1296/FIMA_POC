@@ -19,11 +19,8 @@ sequenceDiagram
     participant Ctrl as SAP Controller
     participant S as SAP Service
     participant SF as SuccessFactors API
-    participant PDF as PDF Converter
-    participant Word as Word Extractor
     participant Upload as File Upload API
     participant DocMS as Document MS
-    participant PlaceholderMS as Placeholder MS
 
     C->>R: POST /sap/v1/offerletter/initiate
     Note right of C: {offerLetterId}
@@ -50,22 +47,10 @@ sequenceDiagram
     end
     
     rect rgb(255, 248, 240)
-        Note over S, Word: File Analysis & Conversion
+        Note over S, Upload: File Analysis & placeholder detection
         S->>S: analyzeFileContent(base64Content)
         S->>S: convertBase64ToBuffer()
         S->>S: getFileType(buffer)
-        
-        alt File type is PDF
-            S->>PDF: convertPdfToDocx(buffer)
-            PDF-->>S: Converted DOCX buffer
-            S->>S: Convert buffer to base64
-            S->>Word: extractTextFromWord(docxBuffer)
-            Word-->>S: Extracted placeholders
-        else File type is DOCX
-            S->>Word: extractTextFromWord(buffer)
-            Word-->>S: Extracted placeholders
-            S->>S: Convert buffer to base64
-        end
         
         S->>S: createPlaceholderPairs(placeholders)
     end
@@ -74,12 +59,12 @@ sequenceDiagram
     S-->>S: Return complete data to initiateOfferLetter
     
     rect rgb(248, 255, 248)
-        Note over S, PlaceholderMS: Document Workflow Creation
+        Note over S, DocMS: Document Workflow Creation
         alt Has Placeholders
             S->>S: Prepare placeholder document data
             Note right of S: flowType: 'placeholder'<br/>documentBase64: converted file<br/>approvers with placeholders
-            S->>PlaceholderMS: POST create workflow
-            PlaceholderMS-->>S: Document workflow created
+            S->>DocMS: POST create workflow
+            DocMS-->>S: Document workflow created
         else No Placeholders
             S->>Upload: getFileUrl(buffer, token, offerLetterId)
             S->>Upload: callUploadFileAPI(formData)
@@ -95,7 +80,8 @@ sequenceDiagram
     Ctrl-->>R: Success response with documentId
     R-->>C: HTTP 200 {documentId}
     
-    Note over C, PlaceholderMS: Email notifications sent to approvers with signing workflow
+    Note over C, DocMS: Email notifications sent to approvers with signing workflow
+
 ```
 
 ## 2. Decision Flow Diagram
@@ -271,4 +257,5 @@ DOCUMENT_PLACEHOLDER_CREATE_URL=<Placeholder Document Management URL>
 ---
 
 *Generated on: {current_date}*
+
 *System: SAP Ambassador API - Offer Letter Workflow* 
